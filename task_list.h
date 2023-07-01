@@ -43,7 +43,7 @@ class TaskList {
   // map<int, Other> task_list_; 
   vector<pair<int, Other>> task_list_;
   char* file_;
-
+  string m_header;//储存表头信息
   // map<int, Other>::iterator FindTask(string name);
   vector<pair<int, Other>>::iterator FindTask(string name);
   // void ShowTask(map<int, Other>::iterator it);
