@@ -5,6 +5,7 @@
 #include <utility>
 #include <cmath>
 #include <vector>
+#include<sstream>
 
 using namespace std;
 
@@ -49,8 +50,8 @@ class TaskList {
 
  private:
   vector<pair<int, Other>> task_list_;
-  char* file_;
-
+  const char* file_;
+  string m_header;
   vector<pair<int, Other>>::iterator FindTask(int id);
   vector<pair<int, Other>>::iterator FindTask(string name); // if not found, return task_list_.end()
   void ShowTask(vector<pair<int, Other>>::iterator it);   // TODO ShowTask ShowHead
