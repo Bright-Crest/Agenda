@@ -43,7 +43,7 @@ class TaskList {
   }
   void Show(int start = 0, int end = pow(2, 31) - 1, int priority_range = 7, 
             bool (*Compare)(pair<int, Other> task1, pair<int, Other> task2) = LessBegin);
-  void Show(string* type_range, int start = 0, int end = pow(2, 31) - 1, int priority_range = 7,
+  void Show(string type, int start = 0, int end = pow(2, 31) - 1, int priority_range = 7,
             bool (*Compare)(pair<int, Other> task1, pair<int, Other> task2) = LessBegin);
   bool Remind();  // TODO Remind
 
