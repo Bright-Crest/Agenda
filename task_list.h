@@ -19,7 +19,7 @@ struct Other {
 
 bool LessBegin(pair<int, Other> task1, pair<int, Other> task2) { return task1.first < task2.first; }
 bool GreaterBegin(pair<int, Other> task1, pair<int, Other> task2) { return task1.first > task2.first; }
-bool LessRemind(pair<int, Other> task1, pair<int, Other> task2) { return task1.second.remind_time > task2.second.remind_time; }
+bool LessRemind(pair<int, Other> task1, pair<int, Other> task2) { return task1.second.remind_time < task2.second.remind_time; }
 bool GreaterRemind(pair<int, Other> task1, pair<int, Other> task2) { return task1.second.remind_time > task2.second.remind_time; }
 
 class TaskList {
