@@ -2,7 +2,10 @@
 #include <ctime>
 #include <vector>
 #include <string>
-
+#include <sstream>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 using namespace std;
 TaskList::TaskList(const char* filename)
 {
