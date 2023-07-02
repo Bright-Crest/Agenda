@@ -188,7 +188,7 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
   int i = 0;
   for (; i < vec.size() && vec[i].second.begin_time < start; i++)
     ;
-  for (; vec[i].second.begin_time <= end; i++) {
+  for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
     if (vec[i].second.priority == Priority)
       cout << "Name: " << vec[i].second.name << endl
            << "Begin time: " << vec[i].second.begin_time << endl
@@ -210,7 +210,7 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
   int i = 0;
   for (; i < vec.size() && vec[i].second.begin_time < start; i++)
     ;
-  for (; vec[i].second.begin_time <= end; i++) {
+  for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
     if (vec[i].second.priority == Priority1)
       cout << "Name: " << vec[i].second.name << endl
            << "Begin time: " << vec[i].second.begin_time << endl
@@ -234,7 +234,7 @@ void TaskList::Show_with_all_priority(int start, int end,
   int i = 0;
   for (; i < vec.size() && vec[i].second.begin_time < start; i++)
     ;
-  for (; vec[i].second.begin_time <= end; i++) {
+  for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
     if (vec[i].second.priority == 4)
       cout << "Name: " << vec[i].second.name << endl
            << "Begin time: " << vec[i].second.begin_time << endl
