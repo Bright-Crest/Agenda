@@ -1,5 +1,6 @@
 #include "task_list.h"
 
+#include <utility>
 #include <algorithm>
 #include <ctime>
 #include <fstream>
@@ -41,17 +42,29 @@ bool TaskList::Load(const char *fileName) {
         stu.remind_time;
     cout << stu.name << " " << stu.begin_time << " " << stu.priority << " "
          << stu.type << " " << stu.remind_time << endl;
-    task_list_.insert(std::make_pair(id, stu));  // 将任务插入任务列表中
-    remind_order_list_.push_back(
-        std::make_pair(id, stu));  // 将任务插入提醒顺序列表中
+    task_list_.push_back(std::make_pair(id, stu));  // 将任务插入任务列表中
   }
   read.close();
-  sort(remind_order_list_.begin(), remind_order_list_.end(),
-       LessRemind);  // 对提醒顺序列表进行排序
+  sort(task_list_.begin(), task_list_.end(),
+       GreaterRemind);  // 对提醒顺序列表进行排序
   return true;
 }
-bool TaskList::Remind() {
+
+void TaskList::Remind() {
   // TODO Remind
+  const time_t kTolerantTime = 15;
+  bool flag = false;
+  for (auto it = task_list_.begin(); it != task_list_.end(); it++) {
+    if (it->second.remind_time <= time(NULL) - kTolerantTime) break;
+    if (it->second.remind_time >= time(NULL) + kTolerantTime) continue;
+    else {
+      if (!flag) {
+        cout << "Attention: the following task(s) should be done!\n";
+        flag = true;
+      }
+      ShowTask(it);
+    }
+  }
 }
 
 vector<pair<int, Other>>::iterator TaskList::FindTask(int id) {
@@ -74,9 +87,13 @@ vector<pair<int, Other>>::iterator TaskList::FindTask(string name) {
 
 void TaskList::ShowTask(vector<pair<int, Other>>::iterator it) {
   // TODO ShowTask
+  cout << it->first << '\t' << it->second.name << '\t' << it->second.begin_time
+       << '\t' << it->second.priority << '\t' << it->second.type << '\t' << it->second.remind_time
+       << "\tOnly for test\n";
 }
 void TaskList::ShowHead() {
   // TODO ShowHead
+  cout << m_header << endl;
 }
 
 void TaskList::Show(int start = 0, int end = pow(2, 31) - 1,
@@ -89,7 +106,7 @@ void TaskList::Show(int start = 0, int end = pow(2, 31) - 1,
   sort(tmp.begin(), tmp.end(), Compare);
 
   // 调用私有函数展示tmp
-  Show(start, end, priority_range, tmp);
+  Show(tmp, start, end, priority_range);
 }
 
 void TaskList::Show(string type, int start = 0, int end = pow(2, 31) - 1,
@@ -106,7 +123,7 @@ void TaskList::Show(string type, int start = 0, int end = pow(2, 31) - 1,
   sort(tmp.begin(), tmp.end(), Compare);
 
   // 调用私有函数展示tmp
-  Show(start, end, priority_range, tmp);
+  Show(tmp, start, end, priority_range);
 }
 
 // 私有函数show，展示vec中begin_time介于start与end之间，priority在priority_range内的事件
