@@ -110,8 +110,8 @@ void TaskList::Show(string type, int start = 0, int end = pow(2, 31) - 1,
 }
 
 // 私有函数show，展示vec中begin_time介于start与end之间，priority在priority_range内的事件
-void TaskList::Show(int start = 0, int end = pow(2, 31) - 1,
-                    int priority_range = 7, vector<pair<int, Other>> &vec) {
+void TaskList::Show(vector<pair<int, Other>> &vec, 
+                    int start = 0, int end = pow(2, 31) - 1, int priority_range = 7) {
   // 根据priority进行区分
   switch (priority_range) {
     case 4: {
