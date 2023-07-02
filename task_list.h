@@ -30,7 +30,7 @@ class TaskList {
   TaskList(const char* filename); // including load
   ~TaskList();
   bool Load(const char* filename);
-  // bool Add(pair<int, Other> task);
+  bool Add(pair<int, Other> task);
   void Erase(int id) { task_list_.erase(FindTask(id)); } 
   void Erase(string name) { task_list_.erase(FindTask(name)); }
   void Clear() { task_list_.clear(); }
