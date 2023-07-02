@@ -96,10 +96,10 @@ void TaskList::ShowHead() {
   cout << m_header << endl;
 }
 
-void TaskList::Show(int start = 0, int end = pow(2, 31) - 1,
-                    int priority_range = 7,
+void TaskList::Show(int start, int end,
+                    int priority_range,
                     bool (*Compare)(pair<int, Other> task1,
-                                    pair<int, Other> task2) = LessBegin) {
+                                    pair<int, Other> task2)) {
   // 创建副本并按begin_time排序
   vector<pair<int, Other>> tmp(task_list_);
 
@@ -109,10 +109,10 @@ void TaskList::Show(int start = 0, int end = pow(2, 31) - 1,
   Show(tmp, start, end, priority_range);
 }
 
-void TaskList::Show(string type, int start = 0, int end = pow(2, 31) - 1,
-                    int priority_range = 7,
+void TaskList::Show(string type, int start, int end,
+                    int priority_range,
                     bool (*Compare)(pair<int, Other> task1,
-                                    pair<int, Other> task2) = LessBegin) {
+                                    pair<int, Other> task2)) {
   // 创建只含type类型的时间的副本并排序
   vector<pair<int, Other>> tmp;
   for (int i = 0; i < task_list_.size(); i++) {
@@ -128,7 +128,7 @@ void TaskList::Show(string type, int start = 0, int end = pow(2, 31) - 1,
 
 // 私有函数show，展示vec中begin_time介于start与end之间，priority在priority_range内的事件
 void TaskList::Show(vector<pair<int, Other>> &vec, 
-                    int start = 0, int end = pow(2, 31) - 1, int priority_range = 7) {
+                    int start, int end, int priority_range) {
   // 根据priority进行区分
   switch (priority_range) {
     case 4: {
@@ -188,7 +188,7 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
   int i = 0;
   for (; i < vec.size() && vec[i].second.begin_time < start; i++)
     ;
-  for (; vec[i].second.begin_time <= end; i++) {
+  for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
     if (vec[i].second.priority == Priority)
       cout << "Name: " << vec[i].second.name << endl
            << "Begin time: " << vec[i].second.begin_time << endl
@@ -210,7 +210,7 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
   int i = 0;
   for (; i < vec.size() && vec[i].second.begin_time < start; i++)
     ;
-  for (; vec[i].second.begin_time <= end; i++) {
+  for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
     if (vec[i].second.priority == Priority1)
       cout << "Name: " << vec[i].second.name << endl
            << "Begin time: " << vec[i].second.begin_time << endl
@@ -234,7 +234,7 @@ void TaskList::Show_with_all_priority(int start, int end,
   int i = 0;
   for (; i < vec.size() && vec[i].second.begin_time < start; i++)
     ;
-  for (; vec[i].second.begin_time <= end; i++) {
+  for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
     if (vec[i].second.priority == 4)
       cout << "Name: " << vec[i].second.name << endl
            << "Begin time: " << vec[i].second.begin_time << endl
