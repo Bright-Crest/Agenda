@@ -28,6 +28,7 @@ static bool GreaterPriority(pair<int, Other> task1, pair<int, Other> task2) { re
 class TaskList {
  public:
   TaskList(const char* filename); // including load
+  TaskList() {}
   ~TaskList();
   bool Load(const char* filename);
   bool Add(pair<int, Other> task);
@@ -46,7 +47,7 @@ class TaskList {
             bool (*Compare)(pair<int, Other> task1, pair<int, Other> task2) = LessBegin);
   void Show(string type, int start = 0, int end = pow(2, 31) - 1, int priority_range = 7,
             bool (*Compare)(pair<int, Other> task1, pair<int, Other> task2) = LessBegin);
-  bool Remind();
+  void Remind();
 
  private:
   vector<pair<int, Other>> task_list_;
