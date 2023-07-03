@@ -131,7 +131,8 @@ void TaskList::ShowHead() {
   cout << m_header << endl;
 }
 
-void TaskList::Show(int start, int end, int priority_range,
+void TaskList::Show(int start, int end,
+                    int priority_range,
                     bool (*Compare)(pair<int, Other> task1,
                                     pair<int, Other> task2)) {
   // 创建副本并按begin_time排序
