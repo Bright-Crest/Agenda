@@ -67,6 +67,7 @@ class TaskList {
   void Show_with_one_priority(int start, int end, int Priority, vector<pair<int, Other> > &vec);//私有函数，处理展示一个优先级的事件的要求
   void Show_with_two_priority(int start, int end, int Priority1, int Priority2, vector<pair<int, Other> > &vec);//私有函数，处理展示两个优先级的事件的要求
   void Show_with_all_priority(int start, int end, vector< pair<int, Other> > &vec);//私有函数，处理展示全部优先级的事件的要求
+  void SaveFile(const std::string& fileName);
 };
 
 
