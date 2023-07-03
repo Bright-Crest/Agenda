@@ -294,3 +294,26 @@ void TaskList::Show_with_all_priority(int start, int end,
 
   cout << endl;
 }
+void TaskList::SaveFile(const std::string& fileName)
+{
+        fstream write(fileName, ios::out | ios::trunc);
+        if (!write.is_open())
+        {
+            cerr << fileName << "file open failed" << endl;
+            return;
+        }
+        //head
+        m_header += '\n';
+        write.write(m_header.c_str(), m_header.size());
+        //data
+        for (auto& val : task_list_)
+        {
+            stringstream ss;
+            ss << val.first << '\t' << val.second.name << '\t' << val.second.begin_time << '\t' <<
+                val.second.priority << '\t' << val.second.type << val.second.remind_time<<'\n';
+            string result=ss.str();
+            write.write(result.c_str(), result.size());
+        }
+        write.close();
+    }
+
