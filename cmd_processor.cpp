@@ -71,8 +71,10 @@ int CmdProcessor::CmdDistributor(TaskList& task_list) const {
     else
       flag = SearchTaskOp(task_list, cmd_);
   } else if (first_cmd == "quit" || first_cmd == "q") {
+    cout << "Bye.\n";
     return -1;
   } else {
+    cout << "\"" << cmd_.front() << "\" is not a valid command.\n";
     return 0;
   }
   return flag;
