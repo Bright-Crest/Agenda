@@ -352,3 +352,20 @@ void TaskList::Show_with_all_priority(int start, int end,
 
 	std::cout << endl;
 }
+
+void TaskList::Remind() {
+  // TODO Remind
+  const time_t kTolerantTime = 15;
+  bool flag = false;
+  for (auto it = task_list_.begin(); it != task_list_.end(); it++) {
+    if (it->second.remind_time <= time(NULL) - kTolerantTime) break;
+    if (it->second.remind_time >= time(NULL) + kTolerantTime) continue;
+    else {
+      if (!flag) {
+        cout << "Attention: the following task(s) should be done!\n";
+        flag = true;
+      }
+      ShowTask(it);
+    }
+  }
+}
