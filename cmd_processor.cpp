@@ -79,3 +79,89 @@ int CmdProcessor::CmdDistributor(TaskList& task_list) const {
   }
   return flag;
 }
+
+// 用户输入格式:addtask -name n -begin b -priority p -type t -remind r (注意:用户输入的参数不能以-开头,priority默认为0,type默认为" ",选项的顺序可以打乱)
+bool AddTaskOp(TaskList &task_list, list<string> &cmd)
+{
+  Other task;
+  task.priority = 0;
+  task.type = " ";
+  string begin;                              // begin用于保存begin_time_并分配唯一的id
+  list<string>::iterator it = ++cmd.begin(); // 从cmd的第二个string开始参考
+  while (it != cmd.end())
+  {
+    if (*it == "-name")
+    {
+      if (++it == cmd.end()) //-name是最后一个,后面没有参数
+          return false;
+      string str = *(it); // 找到-name的下一位
+      if (str[0] == '-')  // 不符合
+          return false;
+      task.name = str;
+      it++;
+    }
+    else if (*it == "-begin")
+    {
+      if (++it == cmd.end()) //-begin是最后一个,后面没有参数
+          return false;
+      begin = *(it);       // 找到-begin的下一位
+      if (begin[0] == '-') // 不符合
+          return false;
+      if (!isValidDate(begin)) // 时间参数不符合要求
+          return false;
+      task.begin_time = to_time_t(begin);
+      it++;
+    }
+    else if (*it == "-priority")
+    {
+      if (++it == cmd.end()) //-priority是最后一个,后面没有参数,这是可以的
+          break;
+      string str = *(it);                                                          // 找到-priority的下一位
+      if (str == "-name" || str == "-begin" || str == "-type" || str == "-remind") //-priority后不跟参数,这是可以的
+          continue;
+      int p = stoi(str);
+      if (p != 1 && p != 2 && p != 4)
+          return false;
+      task.priority = p;
+      it++;
+    }
+    else if (*it == "-type")
+    {
+      if (++it == cmd.end()) //-type是最后一个,后面没有参数,这是可以的
+          break;
+      string str = *(it);                                                              // 找到-type的下一位
+      if (str == "-name" || str == "-begin" || str == "-priority" || str == "-remind") //-type后不跟参数,这是可以的
+          continue;
+      if (str != "entertainment" && str != "sport" && str != "study" && str != "routine")
+          return false;
+      task.type = str;
+      it++;
+    }
+    else if (*it == "-remind")
+    {
+      if (++it == cmd.end()) //-remind是最后一个,后面没有参数
+          return false;
+      string str = *(it); // 找到-remind的下一位
+      if (str[0] == '-')  // 不符合
+          return false;
+      if (!isValidDate(str)) // 时间参数不符合要求
+          return false;
+      task.begin_time = to_time_t(str);
+      it++;
+    }
+    else
+    {
+      cout << "Invalid command" << endl;
+      return false;
+    }
+  }
+
+  int id = to_time_t(begin); // 得到id后打包进行add
+  if (!task_list.Add(make_pair(id, task)))
+  {
+    cout << "Faliure" << endl;
+    return false;
+  }
+
+  return true;
+}
