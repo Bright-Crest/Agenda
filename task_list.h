@@ -25,6 +25,8 @@ class TaskList {
 public:
     TaskList(const char* filename); // including load
     ~TaskList();
+    vector<pair<int, Other>>::iterator return_end()
+        return task_list_.end();
     bool Load(const char* filename);
     bool Add(pair<int, Other> task);
     bool Erase(int id);
