@@ -58,9 +58,9 @@ public:
     vector<pair<int, Other>>::iterator FindTask(int id);
     vector<pair<int, Other>>::iterator FindTask(string name); // if not found, return task_list_.end()
 
-    vector<pair<int, Other>> task_list_;
-private:
     
+private:
+    vector<pair<int, Other>> task_list_;
     const char* file_;
 
     string m_header;  // 储存表头信息
