@@ -765,7 +765,7 @@ bool AddTaskNoOp(TaskList& task_list){
     newtask.remind_time = to_time_t(remind_t);//将用户输入的形式转化成time_t格式保存
     //id和开始时间一样
     int id = to_time_t(begin_t)%1000;
-    while(task_list.FindTask(id) == task_list.task_list_.end()){
+    while(task_list.FindTask(id) == task_list.return_end()){
         id++;
     }
     int res = task_list.Add(make_pair(id, newtask));
@@ -783,7 +783,7 @@ bool AddTaskNoOp(TaskList& task_list){
             }
             newtask.begin_time = to_time_t(begin_t);//将用户输入的形式转化成time_t格式保存
             id = to_time_t(begin_t)%1000;
-            while(task_list.FindTask(id) == task_list.task_list_.end()){
+            while(task_list.FindTask(id) == task_list.return_end()){
                 id++;
             }
             res = task_list.Add(make_pair(id, newtask));
