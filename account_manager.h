@@ -48,7 +48,7 @@ class AccountManager {
 };
 
 string TakePwSecure();
-bool UserLogin(const AccountManager& am, const vector<string>& cmd, string& user);  // deal with cmd and read user name from cmd; return: false -- login failed.
+bool UserLogin(const AccountManager& am, const vector<string>& cmd, string& user, string& pw);  // deal with cmd and read user name and password from cmd; return: false -- login failed.
 bool UserChangePw(const AccountManager& am, const vector<string>& cmd,
                   string& user);
 bool CreatAccount(const AccountManager& am, const vector<string>& cmd,
