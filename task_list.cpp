@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iomanip>
 TaskList::TaskList(const char* filename)
 {
 	file_ = filename;
@@ -168,14 +169,31 @@ void TaskList::ShowTask(vector<pair<int, Other>>::iterator it) {
 	string showbegintime = to_string_t(it->second.begin_time);
 	string showremindtime = to_string_t(it->second.remind_time);
 	std::cout << "----------------------------------------------------------------------------------------------------" << endl;
-	std::cout << it->first << '\t' << it->second.name << '\t' << showbegintime
-		<< '\t' << it->second.priority << '\t' << it->second.type << '\t' << showremindtime
-		<< "\tOnly for test\n";
+	std::cout << std::setw(14) << it->first << '\t'
+		<< std::setw(14) << it->second.name << '\t'
+		<< std::setw(14) << showbegintime << '\t'
+		<< it->second.priority << '\t'
+		<< std::setw(14) << it->second.type << '\t'
+		<< std::setw(14) << showremindtime << endl;;
 	std::cout << "----------------------------------------------------------------------------------------------------" << endl;
 }
 void TaskList::ShowHead() {
 	// TODO ShowHead
-	std::cout << m_header << endl;
+	string ID;
+	string t_name;
+	string t_type;
+	string t_priority;
+	string t_begin;
+	string t_remind;
+	stringstream ss(m_header);
+	ss >> ID >> t_name >> t_begin >> t_priority >> t_type >> t_remind;
+	std::cout << std::setw(10) << ID << '\t'
+		<< std::setw(14) << t_name << '\t'
+		<< std::setw(14) << t_begin << '\t'
+		<< std::setw(14) << t_priority << '\t'
+		<< std::setw(10) << t_type << '\t'
+		<< std::setw(14) << t_remind << endl;;
+
 }
 void TaskList::Show(int start, int end, int priority_range,
 	bool (*Compare)(pair<int, Other> task1,
@@ -271,14 +289,17 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
 	for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
 		string b_t = to_string_t(vec[i].second.begin_time);
 		string r_t = to_string_t(vec[i].second.remind_time);
-		std::cout << "----------------------------------------------------------------" << endl;
+
 		if (vec[i].second.priority == Priority)
-			std::cout << "Name: " << vec[i].second.name << endl
-			<< "Begin time: " << b_t << endl
-			<< "Priority: " << sPriority << endl
-			<< "Type: " << vec[i].second.type << endl
-			<< "Remind time: " << r_t << endl;
-		std::cout << "----------------------------------------------------------------" << endl;
+		{
+			std::cout << "----------------------------------------------------------------" << endl;
+			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+				<< std::setw(14) << "Begin time: " << b_t << endl
+				<< std::setw(14) << "Priority: " << sPriority << endl
+				<< std::setw(14) << "Type: " << vec[i].second.type << endl
+				<< std::setw(14) << "Remind time: " << r_t << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
+		}
 	}
 
 	std::cout << endl;
@@ -295,22 +316,30 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
 	for (; i < vec.size() && vec[i].second.begin_time < start; i++)
 		;
 	for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
-		std::cout << "----------------------------------------------------------------" << endl;
+	
 		string b_t = to_string_t(vec[i].second.begin_time);
 		string r_t = to_string_t(vec[i].second.remind_time);
 		if (vec[i].second.priority == Priority1)
-			std::cout << "Name: " << vec[i].second.name << endl
-			<< "Begin time: " << b_t << endl
-			<< "Priority: " << sPriority1 << endl
-			<< "Type: " << vec[i].second.type << endl
-			<< "Remind time: " << r_t << endl;
+		{
+			std::cout << "----------------------------------------------------------------" << endl;
+			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+				<< std::setw(14) << "Begin time: " << b_t << endl
+				<< std::setw(14) << "Priority: " << sPriority1 << endl
+				<< std::setw(14) << "Type: " << vec[i].second.type << endl
+				<< std::setw(14) << "Remind time: " << r_t << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
+		}
 		else if (vec[i].second.priority == Priority2)
-			std::cout << "Name: " << vec[i].second.name << endl
-			<< "Begin time: " << b_t << endl
-			<< "Priority: " << sPriority2 << endl
-			<< "Type: " << vec[i].second.type << endl
-			<< "Remind time: " << r_t << endl;
-		std::cout << "----------------------------------------------------------------" << endl;
+		{
+			std::cout << "----------------------------------------------------------------" << endl;
+			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+				<< std::setw(14) << "Begin time: " << b_t << endl
+				<< std::setw(14) << "Priority: " << sPriority2 << endl
+				<< std::setw(14) << "Type: " << vec[i].second.type << endl
+				<< std::setw(14) << "Remind time: " << r_t << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
+		}
+
 	}
 
 	std::cout << endl;
@@ -323,31 +352,42 @@ void TaskList::Show_with_all_priority(int start, int end,
 	for (; i < vec.size() && vec[i].second.begin_time < start; i++)
 		;
 	for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
-		std::cout << "----------------------------------------------------------------" << endl;
+
 		string b_t = to_string_t(vec[i].second.begin_time);
 		string r_t = to_string_t(vec[i].second.remind_time);
 		if (vec[i].second.priority == 4)
-			std::cout << "Name: " << vec[i].second.name << endl
-			<< "Begin time: " << b_t << endl
-			<< "Priority: "
-			<< "High" << endl
-			<< "Type: " << vec[i].second.type << endl
-			<< "Remind time: " << r_t << endl;
+		{
+			std::cout << "----------------------------------------------------------------" << endl;
+			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+				<< std::setw(14) << "Begin time: " << b_t << endl
+				<< std::setw(14) << "Priority: " << 4<< endl
+				<< std::setw(14) << "Type: " << vec[i].second.type << endl
+				<< std::setw(14) << "Remind time: " << r_t << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
+		}
+		
 		else if (vec[i].second.priority == 2)
-			std::cout << "Name: " << vec[i].second.name << endl
-			<< "Begin time: " << b_t << endl
-			<< "Priority: "
-			<< "Medium" << endl
-			<< "Type: " << vec[i].second.type << endl
-			<< "Remind time: " << r_t << endl;
+		{
+			std::cout << "----------------------------------------------------------------" << endl;
+			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+				<< std::setw(14) << "Begin time: " << b_t << endl
+				<< std::setw(14) << "Priority: " << 2 << endl
+				<< std::setw(14) << "Type: " << vec[i].second.type << endl
+				<< std::setw(14) << "Remind time: " << r_t << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
+		}
+
 		else if (vec[i].second.priority == 1)
-			std::cout << "Name: " << vec[i].second.name << endl
-			<< "Begin time: " << b_t << endl
-			<< "Priority: "
-			<< "Low" << endl
-			<< "Type: " << vec[i].second.type << endl
-			<< "Remind time: " << r_t << endl;
+		{
+			std::cout << "----------------------------------------------------------------" << endl;
+		std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+			<< std::setw(14) << "Begin time: " << b_t << endl
+			<< std::setw(14) << "Priority: " << 1 << endl
+			<< std::setw(14) << "Type: " << vec[i].second.type << endl
+			<< std::setw(14) << "Remind time: " << r_t << endl;
 		std::cout << "----------------------------------------------------------------" << endl;
+	}
+
 	}
 
 	std::cout << endl;
