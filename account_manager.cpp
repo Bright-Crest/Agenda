@@ -79,18 +79,24 @@ bool AccountManager::ChangePw(const string& user, const string& pw,
                               const string& new_pw) const {
   if (!Login(user, pw)) return false;
   // check new_pw length
-  if (pw.length() < 8 || pw.length() > 16) {
+  if (new_pw.length() < 8 || new_pw.length() > 16) {
     cout << "Password should be within 8 and 16 characters.\n";
     return false;
-  } else if (pw[0] == '-') {
+  } else if (new_pw[0] == '-') {
     cout << "Password should not begin with '-'.\n";
     return false;
+  }
+  for (int i = 0; i < new_pw.length(); i++) {
+    if (new_pw[i] == ' ') {
+      cout << "Password should not contain whitespace.\n";
+      return false;
+    }
   }
 
   sql::PreparedStatement* pstmt;
   string expr = "UPDATE " + table_ + " SET " + encrypt_pw_column_ +
                 " = ? WHERE " + user_column_ + " = ?";
-  cout << expr << endl;
+  //cout << expr << endl;
 
   pstmt = con_->prepareStatement(expr);
   pstmt->setString(1, new_pw);
@@ -121,6 +127,12 @@ bool AccountManager::Create(const string& user, const string& pw) const {
   } else if (pw[0] == '-') {
     cout << "Password should not begin with '-'.\n";
     return false;
+  }
+  for (int i = 0; i < pw.length(); i++) {
+    if (pw[i] == ' ') {
+      cout << "Password should not contain whitespace.\n";
+      return false;
+    }
   }
 
   sql::PreparedStatement* pstmt;
@@ -221,33 +233,72 @@ void AccountManager::PrintTable_Insecure() const {
   delete res;
 }
 
-string TakePwSecure() {
+string TakePwSecure() { 
   cout << "[password]: ";
 
-  enum IN { kBackspace = 8, kReturn = 32 };
+  enum IN { kBackspace = 8, kReturn = 13, kSpace = 32 };
 
   string pw = "";
   char ch;
 
   while (true) {
     ch = _getch();
-    if (ch < IN::kReturn && ch != IN::kBackspace) {
+    if (ch == kReturn) {
       cout << '\n';
       return pw;
-    } else if (ch == IN::kBackspace) {
-      if (pw.size() > 0) {
+    } else if (ch == kBackspace) {
+      if (!pw.empty()) {
+        cout << "\b \b";
         pw.pop_back();
       }
+    } else if (ch < kSpace) {
+      continue;
     } else {
       pw.push_back(ch);
     }
   }
 }
 
-bool UserLogin(const AccountManager& am, const vector<string>& cmd,
-               string& user) {
-  string pw = "";
+bool ExtractUser(const vector<string>& cmd, string& user) {
+  user = "";
+  auto it = find(cmd.begin(), cmd.end(), "-u");
+  if (it == cmd.end()) {
+    cout << "No Option \"-u\".\n";
+    return false;
+  } else if (++it == cmd.end() || (*it)[0] == '-') {
+    cout << "No content behind Option \"-u\".\n";
+    return false;
+  } else if ((it + 1) != cmd.end() && (*(it + 1))[0] != '-') {
+    cout << "User name should not contain whitespace.\n";
+    return false;
+  }
+  user = *it;
 
+  return true;
+}
+
+bool ExtractPw(const vector<string>& cmd, string& pw) {
+  pw = "";
+  auto it = find(cmd.begin(), cmd.end(), "-p");
+  if (it == cmd.end()) {
+    cout << "No Option \"-p\".\n";
+    return false;
+  } else if (++it != cmd.end() && (*it)[0] != '-') {
+    cout << "Recommend not to input your password explicitly in the command "
+            "line since it's insecure.\n";
+    if ((it + 1) != cmd.end() && (*(it + 1))[0] != '-') {
+      cout << "Password should not contain whitespace.\n";
+      return false;
+    }
+    pw = *it;
+  } else {
+    pw = TakePwSecure();
+  }
+  return true;
+}
+
+bool UserLogin(const AccountManager& am, const vector<string>& cmd,
+               string& user, string& pw) {
   if (!ExtractUser(cmd, user)) return false;
   if (!ExtractPw(cmd, pw)) return false;
 
@@ -322,33 +373,21 @@ bool DeleteAccount(const AccountManager& am, const vector<string>& cmd,
   }
 }
 
-bool ExtractUser(const vector<string>& cmd, string& user) {
-  user = "";
-  auto it = find(cmd.begin(), cmd.end(), "-u");
-  if (it == cmd.end()) {
-    cout << "No Option \"-u\".\n";
-    return false;
-  } else if (++it == cmd.end() || (*it)[0] == '-') {
-    cout << "No content behind Option \"-u\".\n";
-    return false;
-  }
-  user = *it;
-
-  return true;
-}
-
-bool ExtractPw(const vector<string>& cmd, string& pw) {
-  pw = "";
-  auto it = find(cmd.begin(), cmd.end(), "-p");
-  if (it == cmd.end()) {
-    cout << "No Option \"-p\".\n";
-    return false;
-  } else if (++it != cmd.end() && (*it)[0] != '-') {
-    cout << "Recommend not to input your password explicitly in the command "
-            "line since it's insecure.\n";
-    pw = *it;
+bool AccountCmdDistributor(const AccountManager& am, const vector<string>& cmd,
+                           string& user, string& pw) {
+  if (cmd[0] == "login" || cmd[0] == "li" || cmd[0] == "-u" || cmd[0] == "-p") {
+    return UserLogin(am, cmd, user, pw);
+  } else if (cmd[0] == "changepassword" || cmd[0] == "changepw" ||
+             cmd[0] == "cp") {
+    UserChangePw(am, cmd, user);
+  } else if (cmd[0] == "createaccount" || cmd[0] == "ca") {
+    CreatAccount(am, cmd, user);
+  } else if (cmd[0] == "deleteaccount" || cmd[0] == "da") {
+    DeleteAccount(am, cmd, user);
   } else {
-    pw = TakePwSecure();
+    throw exception("In AccountCmdDistributor, cmd[0] is false.\n");
   }
-  return true;
+
+  return false;
 }
+
