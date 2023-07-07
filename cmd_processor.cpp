@@ -1166,15 +1166,12 @@ bool SearchTaskNoOp(TaskList& task_list){
     std::cin >> ix;
     while (!task_list.FindShow(ix)) // 检查输入是否有效
     {
-      if(!task_list.FindShow(ix)){
         std::cin.clear(); // 清除输入流状态标志
         std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
 
         std::cout << "Can not find this name. Please enter a valid id: " << endl;
         std::cin >> ix;
-      }
     }
-    task_list.FindShow(ix);
     break;
   }
   return true;
