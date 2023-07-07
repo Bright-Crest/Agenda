@@ -1132,25 +1132,21 @@ bool SearchTaskNoOp(TaskList& task_list) {
           std::cin >> id;
         }
       }
-      break;
-    default:
-      std::cout << "please input the name of the wanted task" << endl;
-      string ix;
-      std::cin >> ix;
-      while (!task_list.FindShow(ix))  // 检查输入是否有效
-      {
-        if (!task_list.FindShow(ix)) {
-          std::cin.clear();  // 清除输入流状态标志
-          std::cin.ignore(numeric_limits<streamsize>::max(),
-                          '\n');  // 忽略剩余的输入
+    }
+    break;
+  default:
+    std::cout << "please input the name of the wanted task" << endl;
+    string ix;
+    std::cin >> ix;
+    while (!task_list.FindShow(ix)) // 检查输入是否有效
+    {
+        std::cin.clear(); // 清除输入流状态标志
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
 
-          std::cout << "Can not find this name. Please enter a valid id: "
-                    << endl;
-          std::cin >> ix;
-        }
-      }
-      task_list.FindShow(ix);
-      break;
+        std::cout << "Can not find this name. Please enter a valid id: " << endl;
+        std::cin >> ix;
+    }
+    break;
   }
   return true;
 }
