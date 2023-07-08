@@ -3,6 +3,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "tools.h"
+#include"file_encrypt.h"
 #include<algorithm>
 #include<sstream>
 #include<stdio.h>
@@ -10,6 +11,37 @@
 #include<iomanip>
 #include<iostream>
 #include<regex>
+#include<fstream>
+bool fileExists(const std::string& filename)
+{
+	
+		std::ifstream file(filename);
+		return file.good();
+	
+}
+void generate_txtfiles(std::string en_filename, std::string de_filename, std::string password)
+{
+	if (!fileExists(en_filename))//如果不存在该用户名下面的二进制文件
+	{
+		// 创建txt文件并写入内容
+		std::ofstream file(de_filename);
+		if (file.is_open()) {
+			file << "ID" << "\t" << "task_name" << "\t" << "begin_time" << "\t" << "priority";
+			file << "\t" << "type" << "\t" << "remind_time";
+			file.close();
+			//printf("文件写入成功\n");
+			//std::remove(username.c_str());
+		}
+		else {
+			printf("create file failure\n");
+		}
+	}
+	else
+	{
+		//已经存在
+		DecryptFile(en_filename, de_filename, password);
+	}
+}
 void to_lower(std::string& str)
 {
 	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) {

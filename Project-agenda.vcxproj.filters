@@ -42,6 +42,15 @@
     <ClCompile Include="account_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AES.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="file_encrypt.h">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="file_encrypt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="task_list.h">
@@ -63,6 +72,9 @@
       <Filter>头文件\bcrypt_header</Filter>
     </ClInclude>
     <ClInclude Include="account_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AES.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

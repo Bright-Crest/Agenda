@@ -116,7 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\MySQL\Connector C++ 8.0\include; C:\Program Files\MySQL\Connector C++ 8.0\include\mysql; C:\Program Files\MySQL\Connector C++ 8.0\include\jdbc; C:\Program Files\MySQL\Connector C++ 8.0\include\jdbc\cppconn; C:\Program Files\MySQL\Connector C++ 8.0\include\mysqlx; C:\Program Files\MySQL\Connector C++ 8.0\include\mysqlx\common; C:\Program Files\MySQL\Connector C++ 8.0\include\mysqlx\devapi; C:\Program Files\MySQL\Connector C++ 8.0\include\mysqlx\devapi\detail; C:\Windows\System32\lib64; </AdditionalIncludeDirectories>
     </ClCompile>
@@ -131,15 +131,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="account_manager.cpp" />
+    <ClCompile Include="AES.cpp" />
     <ClCompile Include="bcrypt.cpp" />
     <ClCompile Include="blowfish.cpp" />
     <ClCompile Include="cmd_processor.cpp" />
+    <ClCompile Include="file_encrypt.cpp" />
+    <ClCompile Include="file_encrypt.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="task_list.cpp" />
     <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="account_manager.h" />
+    <ClInclude Include="AES.h" />
     <ClInclude Include="bcrypt.h" />
     <ClInclude Include="cmd_processor.h" />
     <ClInclude Include="node_blf.h" />
