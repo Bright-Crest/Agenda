@@ -97,25 +97,26 @@ int CmdProcessor::CmdDistributor(TaskList& task_list) const {
   return (int)flag;
 }
 
-// ÓÃ»§ÊäÈë¸ñÊ½:addtask -n name -b begin -p priority -t type -r remind
-// (×¢Òâ:ÓÃ»§ÊäÈëµÄ²ÎÊı²»ÄÜÒÔ-¿ªÍ·,priorityÄ¬ÈÏÎª0,typeÄ¬ÈÏÎª"
-// ",Ñ¡ÏîµÄË³Ğò¿ÉÒÔ´òÂÒ)
-bool AddTaskOp(TaskList& task_list, list<string> cmd) {
+// ç”¨æˆ·è¾“å…¥æ ¼å¼:addtask -n name -b begin -p priority -t type -r remind (æ³¨æ„:ç”¨æˆ·è¾“å…¥çš„å‚æ•°ä¸èƒ½ä»¥-å¼€å¤´,priorityé»˜è®¤ä¸º0,typeé»˜è®¤ä¸º" ",é€‰é¡¹çš„é¡ºåºå¯ä»¥æ‰“ä¹±)
+bool AddTaskOp(TaskList &task_list, list<string> cmd)
+{
   Other task;
   task.priority = 0;
   task.type = " ";
-  string begin;  // beginÓÃÓÚ±£´æbegin_time_²¢·ÖÅäÎ¨Ò»µÄid
-  list<string>::iterator it = ++cmd.begin();  // ´ÓcmdµÄµÚ¶ş¸östring¿ªÊ¼²Î¿¼
+  string begin;                              // beginç”¨äºä¿å­˜begin_time_å¹¶åˆ†é…å”¯ä¸€çš„id
+  list<string>::iterator it = ++cmd.begin(); // ä»cmdçš„ç¬¬äºŒä¸ªstringå¼€å§‹å‚è€ƒ
 
-  while (it != cmd.end()) {
-    if (*it == "-n") {
-      if (++it == cmd.end())  //-nameÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+  while (it != cmd.end())
+  {
+    if (*it == "-n")
+    {
+      if (++it == cmd.end()) //-nameæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -n" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -n" << endl;
         return false;
@@ -123,51 +124,56 @@ bool AddTaskOp(TaskList& task_list, list<string> cmd) {
 
       task.name = str;
       it++;
-    } else if (*it == "-b") {
-      if (++it == cmd.end())  //-beginÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+    }
+    else if (*it == "-b")
+    {
+      if (++it == cmd.end()) //-beginæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         return false;
         cout << "No parameters after -b" << endl;
       }
-      begin = *(it);        // ÕÒµ½-beginµÄÏÂÒ»Î»
-      if (begin[0] == '-')  // ²»·ûºÏ
+      begin = *(it);       // æ‰¾åˆ°-beginçš„ä¸‹ä¸€ä½
+      if (begin[0] == '-') // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -b" << endl;
         return false;
       }
-      if (!isValidDate(begin))  // Ê±¼ä²ÎÊı²»·ûºÏÒªÇó
+      if (!isValidDate(begin)) // æ—¶é—´å‚æ•°ä¸ç¬¦åˆè¦æ±‚
       {
-        cout << "The parameter does not meet the requirements" << endl;
+        cout << "The begin_time parameter does not meet the requirements" << endl;
         return false;
       }
 
       task.begin_time = to_time_t(begin);
 
       it++;
-    } else if (*it == "-p") {
-      if (++it == cmd.end())  //-priorityÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-p")
+    {
+      if (++it == cmd.end()) //-priorityæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         break;
-      string str = *(it);  // ÕÒµ½-priorityµÄÏÂÒ»Î»
-      if (str == "-n" || str == "-b" || str == "-t" ||
-          str == "-r")  //-priorityºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      string str = *(it);                                           // æ‰¾åˆ°-priorityçš„ä¸‹ä¸€ä½
+      if (str == "-n" || str == "-b" || str == "-t" || str == "-r") //-priorityåä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
       {
         it++;
         continue;
       }
       int p = stoi(str);
-      if (p != 1 && p != 2 && p != 4) {
-        cout << "The parameters do not meet the requirements";
+      if (p != 1 && p != 2 && p != 4)
+      {
+        cout << "The priority parameters do not meet the requirements";
         return false;
       }
 
       task.priority = p;
       it++;
-    } else if (*it == "-t") {
-      if (++it == cmd.end())  //-typeÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-t")
+    {
+      if (++it == cmd.end()) //-typeæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         break;
-      string str = *(it);  // ÕÒµ½-typeµÄÏÂÒ»Î»
-      if (str == "-n" || str == "-b" || str == "-p" ||
-          str == "-r")  //-typeºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      string str = *(it);                                           // æ‰¾åˆ°-typeçš„ä¸‹ä¸€ä½
+      if (str == "-n" || str == "-b" || str == "-p" || str == "-r") //-typeåä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
       {
         it++;
         continue;
@@ -175,72 +181,77 @@ bool AddTaskOp(TaskList& task_list, list<string> cmd) {
 
       task.type = str;
       it++;
-    } else if (*it == "-r") {
-      if (++it == cmd.end())  //-remindÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+    }
+    else if (*it == "-r")
+    {
+      if (++it == cmd.end()) //-remindæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -r" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-remindµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-remindçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -r" << endl;
         return false;
       }
-      if (!isValidDate(str))  // Ê±¼ä²ÎÊı²»·ûºÏÒªÇó
+      if (!isValidDate(str)) // æ—¶é—´å‚æ•°ä¸ç¬¦åˆè¦æ±‚
       {
-        cout << "The parameters do not meet the requirements";
+        cout << "The remind_time parameters do not meet the requirements";
         return false;
       }
 
       task.remind_time = to_time_t(str);
       it++;
-    } else {
+    }
+    else
+    {
       cout << "Invalid command" << endl;
       return false;
     }
   }
 
-  int id = (to_time_t(begin)) % 997;  // µÃµ½idºó´ò°ü½øĞĞadd
+  int id = (to_time_t(begin)) % 997; // å¾—åˆ°idåæ‰“åŒ…è¿›è¡Œadd
   vector<pair<int, Other>>::iterator it1 = task_list.FindTask(id);
-  while (it1 != task_list.return_end()) {
+  while (it1 != task_list.return_end())
+  {
     id = (id + 1) % 997;
     it1 = task_list.FindTask(id);
   }
-  if (task_list.Add(make_pair(id, task))) {
-    cout << "Faliure" << endl;
+  if (task_list.Add(make_pair(id, task)))
+  {
+    cout << "Faliure,unable to add the new task" << endl;
     return false;
   }
 
   return true;
 }
 
-// ÖØÒª¹æ¶¨:ÓÃÓÚ²éÕÒµÄÑ¡ÏîÊÇ´óĞ´,ÓÃÓÚĞŞ¸ÄµÄÑ¡ÏîÊÇĞ¡Ğ´!
-//  ÓÃ»§ÊäÈë¸ñÊ½: modifytask -N name -I id -n new_name -b begin -p priority -t
-//  type -r
-//  remind(×¢Òâ:-NºÍ-IÖÁÉÙÓĞ1¸ö,-p,-tºóÃæ¿ÉÒÔÃ»ÓĞ²ÎÊı,-n,-b,-rºóÃæ±ØĞëÓĞ²ÎÊı,id²»¿ÉÒÔĞŞ¸Ä)
-bool ModifyTaskOp(TaskList& task_list, list<string> cmd) {
-  string name = "-";  // ÓÃÓÚ²éÕÒµÄname,Ä¬ÈÏÊÇ"-"
-  int id = -1;        // ÓÃÓÚ²éÕÒµÄid
+// é‡è¦è§„å®š:ç”¨äºæŸ¥æ‰¾çš„é€‰é¡¹æ˜¯å¤§å†™,ç”¨äºä¿®æ”¹çš„é€‰é¡¹æ˜¯å°å†™!
+//  ç”¨æˆ·è¾“å…¥æ ¼å¼: modifytask -N name -I id -n new_name -b begin -p priority -t type -r remind(æ³¨æ„:-Nå’Œ-Iè‡³å°‘æœ‰1ä¸ª,-p,-tåé¢å¯ä»¥æ²¡æœ‰å‚æ•°,-n,-b,-råé¢å¿…é¡»æœ‰å‚æ•°,idä¸å¯ä»¥ä¿®æ”¹)
+bool ModifyTaskOp(TaskList &task_list, list<string> cmd)
+{
+  string name = "-"; // ç”¨äºæŸ¥æ‰¾çš„name,é»˜è®¤æ˜¯"-"
+  int id = -1;       // ç”¨äºæŸ¥æ‰¾çš„id
   Other task;
-  task.name =
-      "-";  // Ä¬ÈÏÊÇ"-",Èô·¢ÏÖÃ»ÓĞÍ¨¹ıÃüÁîĞŞ¸Ä,Ôòcopy²éÕÒµ½µÄÈÎÎñµÄname,ÆäËûµÄÊôĞÔÍ¬Àí
+  task.name = "-"; // é»˜è®¤æ˜¯"-",è‹¥å‘ç°æ²¡æœ‰é€šè¿‡å‘½ä»¤ä¿®æ”¹,åˆ™copyæŸ¥æ‰¾åˆ°çš„ä»»åŠ¡çš„name,å…¶ä»–çš„å±æ€§åŒç†
   task.begin_time = -1;
   task.priority = 0;
-  task.type = " ";
+  task.type = "-";
   task.remind_time = -1;
-  list<string>::iterator it = ++cmd.begin();  // ´ÓcmdµÄµÚ¶ş¸östring¿ªÊ¼²Î¿¼
+  list<string>::iterator it = ++cmd.begin(); // ä»cmdçš„ç¬¬äºŒä¸ªstringå¼€å§‹å‚è€ƒ
 
-  while (it != cmd.end()) {
-    if (*it == "-n")  // ĞŞ¸ÄËùÓÃµÄname
+  while (it != cmd.end())
+  {
+    if (*it == "-n") // ä¿®æ”¹æ‰€ç”¨çš„name
     {
-      if (++it == cmd.end())  //-nameÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-nameæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -n" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -n" << endl;
         return false;
@@ -248,15 +259,16 @@ bool ModifyTaskOp(TaskList& task_list, list<string> cmd) {
 
       task.name = str;
       it++;
-    } else if (*it == "-N")  // ²éÕÒËùÓÃµÄname
+    }
+    else if (*it == "-N") // æŸ¥æ‰¾æ‰€ç”¨çš„name
     {
-      if (++it == cmd.end())  //-nameÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-nameæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -N" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -N" << endl;
         return false;
@@ -264,99 +276,108 @@ bool ModifyTaskOp(TaskList& task_list, list<string> cmd) {
 
       name = str;
       it++;
-    } else if (*it == "-I")  // ²éÕÒËùÓÃµÄid
+    }
+    else if (*it == "-I") // æŸ¥æ‰¾æ‰€ç”¨çš„id
     {
-      if (++it == cmd.end())  //-idÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-idæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -I" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -I" << endl;
         return false;
       }
 
-      id = stoi(str);  // ±£´æĞèÒª´¦ÀíµÄid,ÎªÖ®ºóµÄ²éÕÒ×ö×¼±¸
+      id = stoi(str); // ä¿å­˜éœ€è¦å¤„ç†çš„id,ä¸ºä¹‹åçš„æŸ¥æ‰¾åšå‡†å¤‡
       it++;
-    } else if (*it == "-b") {
-      if (++it == cmd.end())  //-beginÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+    }
+    else if (*it == "-b")
+    {
+      if (++it == cmd.end()) //-beginæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         return false;
         cout << "No parameters after -b" << endl;
       }
-      string str = *(it);  // ÕÒµ½-beginµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-beginçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -b" << endl;
         return false;
       }
-      if (!isValidDate(str))  // Ê±¼ä²ÎÊı²»·ûºÏÒªÇó
+      if (!isValidDate(str)) // æ—¶é—´å‚æ•°ä¸ç¬¦åˆè¦æ±‚
       {
-        cout << "The parameter does not meet the requirements" << endl;
+        cout << "The begin_time parameter does not meet the requirements" << endl;
         return false;
       }
 
       task.begin_time = to_time_t(str);
       it++;
-    } else if (*it == "-p") {
-      if (++it == cmd.end())  //-priorityÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-p")
+    {
+      if (++it == cmd.end()) //-priorityæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         break;
-      string str = *(it);  // ÕÒµ½-priorityµÄÏÂÒ»Î»
-      if (str == "-n" || str == "-b" || str == "-t" || str == "-r" ||
-          str == "-N" || str == "-I")  //-priorityºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      string str = *(it);                                                                         // æ‰¾åˆ°-priorityçš„ä¸‹ä¸€ä½
+      if (str == "-n" || str == "-b" || str == "-t" || str == "-r" || str == "-N" || str == "-I") //-priorityåä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         continue;
       int p = stoi(str);
-      if (p != 1 && p != 2 && p != 4) {
-        cout << "The parameters do not meet the requirements";
+      if (p != 1 && p != 2 && p != 4)
+      {
+        cout << "The priority parameters do not meet the requirements";
         return false;
       }
 
       task.priority = p;
       it++;
-    } else if (*it == "-t") {
-      if (++it == cmd.end())  //-typeÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-t")
+    {
+      if (++it == cmd.end()) //-typeæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         break;
       string str = *(it);
-      if (str == "-n" || str == "-b" || str == "-p" || str == "-r" ||
-          str == "-N" || str == "-I")  //-typeºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      if (str == "-n" || str == "-b" || str == "-p" || str == "-r" || str == "-N" || str == "-I") //-typeåä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         continue;
       task.type = str;
       it++;
-    } else if (*it == "-r") {
-      if (++it == cmd.end())  //-remindÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+    }
+    else if (*it == "-r")
+    {
+      if (++it == cmd.end()) //-remindæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -r" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-remindµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-remindçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -r" << endl;
         return false;
       }
-      if (!isValidDate(str))  // Ê±¼ä²ÎÊı²»·ûºÏÒªÇó
+      if (!isValidDate(str)) // æ—¶é—´å‚æ•°ä¸ç¬¦åˆè¦æ±‚
       {
-        cout << "The parameters do not meet the requirements";
+        cout << "The remind_time parameters do not meet the requirements";
         return false;
       }
 
       task.remind_time = to_time_t(str);
       it++;
-    } else {
+    }
+    else
+    {
       cout << "Invalid command" << endl;
       return false;
     }
   }
 
-  int id1;  // ±£´æĞŞ¸ÄÈÎÎñµÄidÖµ
+  int id1; // ä¿å­˜ä¿®æ”¹ä»»åŠ¡çš„idå€¼
   vector<pair<int, Other>>::iterator it1 = task_list.FindTask(id);
   vector<pair<int, Other>>::iterator it2 = task_list.FindTask(name);
   bool flag1 = it1 != task_list.return_end();
   bool flag2 = it2 != task_list.return_end();
-  if ((flag1 && flag2 && it1 == it2) || (!flag1 && flag2) ||
-      (flag1 && !flag2))  // 3ÖÖ·ûºÏ²éÕÒÒªÇóµÄÇé¿ö
+  if ((flag1 && flag2 && it1 == it2) || (flag1 && name == "-" && !flag2) || (!flag1 && id == -1 && flag2)) // 3ç§ç¬¦åˆæŸ¥æ‰¾è¦æ±‚çš„æƒ…å†µ,åˆ†åˆ«æ˜¯:id,nameå‡æœ‰ç­›é€‰ä¸”åŒ¹é…;ä»¥åŠid,nameä»…æœ‰ä¸€ä¸ªä¸”æ‰¾åˆ°
   {
     vector<pair<int, Other>>::iterator itt;
     if (flag1)
@@ -364,49 +385,60 @@ bool ModifyTaskOp(TaskList& task_list, list<string> cmd) {
     else
       itt = it2;
     id1 = itt->first;
-    if (task.name == "-") task.name = itt->second.name;
-    if (task.begin_time == -1) task.begin_time = itt->second.begin_time;
-    if (task.type == " ") task.type = itt->second.type;
-    if (task.priority == 0) task.priority = itt->second.priority;
-    if (task.remind_time == -1) task.remind_time = itt->second.remind_time;
+    if (task.name == "-")
+      task.name = itt->second.name;
+    if (task.begin_time == -1)
+      task.begin_time = itt->second.begin_time;
+    if (task.type == "-")
+      task.type = itt->second.type;
+    if (task.priority == 0)
+      task.priority = itt->second.priority;
+    if (task.remind_time == -1)
+      task.remind_time = itt->second.remind_time;
 
     if (flag1)
-      task_list.Erase(id);  // É¾³ı¶ÔÓ¦µÄÈÎÎñ
+      task_list.Erase(id); // åˆ é™¤å¯¹åº”çš„ä»»åŠ¡
     else
       task_list.Erase(name);
 
-    if (!task_list.Add(make_pair(id1, task)))  // Ìí¼ÓÏàÓ¦µÄÈÎÎñ
+    if (task_list.Add(make_pair(id1, task))) // æ·»åŠ ç›¸åº”çš„ä»»åŠ¡
     {
-      cout << "Faliure" << endl;
+      cout << "Faliure,unable to add the new task" << endl;
       return false;
     }
 
     task_list.saveFile();
 
     return true;
-  } else {
+  }
+  else // idå’Œmatchç­›é€‰å¾—åˆ°çš„ä»»åŠ¡ä¸æ˜¯åŒä¸€ä¸ª
+  {
     task_list.saveFile();
+
+    cout << "The id and name used for modifying do not match" << endl;
 
     return false;
   }
 }
 
-// Ê¹ÓÃËµÃ÷: searchtask -N name -I id(-NºÍ-IÖÁÉÙÓĞÒ»¸ö)
-bool SearchTaskOp(TaskList& task_list, list<string> cmd) {
-  string name = "-";  // ±£´æĞèÒª²éÕÒµÄname,Ä¬ÈÏÎª"-"
+// ä½¿ç”¨è¯´æ˜: searchtask -N name -I id(-Nå’Œ-Iè‡³å°‘æœ‰ä¸€ä¸ª)
+bool SearchTaskOp(TaskList &task_list, list<string> cmd)
+{
+  string name = "-"; // ä¿å­˜éœ€è¦æŸ¥æ‰¾çš„name,é»˜è®¤ä¸º"-"
   int id = -1;
-  list<string>::iterator it = ++cmd.begin();  // ´ÓcmdµÄµÚ¶ş¸östring¿ªÊ¼²Î¿¼
+  list<string>::iterator it = ++cmd.begin(); // ä»cmdçš„ç¬¬äºŒä¸ªstringå¼€å§‹å‚è€ƒ
 
-  while (it != cmd.end()) {
-    if (*it == "-N")  // ²éÕÒËùÓÃµÄname
+  while (it != cmd.end())
+  {
+    if (*it == "-N") // æŸ¥æ‰¾æ‰€ç”¨çš„name
     {
-      if (++it == cmd.end())  //-nameÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-nameæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -N" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -N" << endl;
         return false;
@@ -414,23 +446,26 @@ bool SearchTaskOp(TaskList& task_list, list<string> cmd) {
 
       name = str;
       it++;
-    } else if (*it == "-I")  // ²éÕÒËùÓÃµÄid
+    }
+    else if (*it == "-I") // æŸ¥æ‰¾æ‰€ç”¨çš„id
     {
-      if (++it == cmd.end())  //-idÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-idæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -I" << endl;
         return false;
       }
       string str = *(it);
-      if (str[0] == '-')  // ²»·ûºÏ
+      if (str[0] == '-') // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -I" << endl;
         return false;
       }
 
-      id = stoi(str);  // ±£´æĞèÒª´¦ÀíµÄid,ÎªÖ®ºóµÄ²éÕÒ×ö×¼±¸
+      id = stoi(str); // ä¿å­˜éœ€è¦å¤„ç†çš„id,ä¸ºä¹‹åçš„æŸ¥æ‰¾åšå‡†å¤‡
       it++;
-    } else {
+    }
+    else
+    {
       cout << "Invalid command" << endl;
       return false;
     }
@@ -439,8 +474,7 @@ bool SearchTaskOp(TaskList& task_list, list<string> cmd) {
   vector<pair<int, Other>>::iterator it2 = task_list.FindTask(name);
   bool flag1 = it1 != task_list.return_end();
   bool flag2 = it2 != task_list.return_end();
-  if ((flag1 && flag2 && it1 == it2) || (!flag1 && flag2) ||
-      (flag1 && !flag2))  // 3ÖÖ·ûºÏ²éÕÒÒªÇóµÄÇé¿ö,Êä³öÈÎÎñĞÅÏ¢
+  if ((flag1 && flag2 && it1 == it2) || (!flag1 && id == -1 && flag2) || (flag1 && name == "-" && !flag2)) // 3ç§ç¬¦åˆæŸ¥æ‰¾è¦æ±‚çš„æƒ…å†µ,è¾“å‡ºä»»åŠ¡ä¿¡æ¯
   {
     if (flag1)
       task_list.FindShow(id);
@@ -448,94 +482,114 @@ bool SearchTaskOp(TaskList& task_list, list<string> cmd) {
       task_list.FindShow(name);
 
     return true;
-  } else
+  }
+  else
+  {
+    cout << "The id and name used for searching do not meet the requirements" << endl;
+
     return false;
+  }
 }
 
-// Ê¹ÓÃËµÃ÷:showtask -S start -E end -P priority -T type -A
-// i(id)/b(begin)/p(priority)/r(remind) -D
-// (ÆäÖĞ-S,-E,-P,-T¾ù¿ÉÒÔÈ±Ê¡,-A,-DÖÁ¶àÓĞ1¸ö,ºóÃæ±ØĞëÓĞ²ÎÊı)
-bool ShowTaskOp(TaskList& task_list, list<string> cmd) {
-  list<string>::iterator it = ++cmd.begin();  // ´ÓcmdµÄµÚ¶ş¸östring¿ªÊ¼
+// ä½¿ç”¨è¯´æ˜:showtask -S start -E end -P priority -T type -a(show all) -A i(id)/b(begin)/p(priority)/r(remind) -D (å…¶ä¸­-S,-E,-P,-Tå‡å¯ä»¥ç¼ºçœ,-A,-Dè‡³å¤šæœ‰1ä¸ª,åé¢å¿…é¡»æœ‰å‚æ•°)
+bool ShowTaskOp(TaskList &task_list, list<string> cmd)
+{
+  list<string>::iterator it = ++cmd.begin(); // ä»cmdçš„ç¬¬äºŒä¸ªstringå¼€å§‹
   int begin_time = -1;
   int end_time = -1;
   int priority = 0;
-  string type = " ";
-  static bool (*func)(pair<int, Other> task1, pair<int, Other> task2) =
-      LessBegin;
+  string type = "-";
+  static bool (*func)(pair<int, Other> task1, pair<int, Other> task2) = LessBegin;
+  bool flagForAll = false;
 
-  while (it != cmd.end()) {
-    if (*it == "-S") {
-      if (++it ==
-          cmd.end())  //-SÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÒòÎªbeginÓĞÈ±Ê¡Öµ,Òò´ËÕâÊÇ¿ÉÒÔµÄ
+  while (it != cmd.end())
+  {
+    if (*it == "-a")
+    {
+      list<string>::iterator it1 = ++it;
+      if (it1 == cmd.end() || *it1 == "-S" || *it1 == "-E" || *it1 == "-P" || *it1 == "-T" || *it1 == "-A" || *it1 == "-D")
+        flagForAll = true;
+      else
+        return false;
+
+      it = it1;
+    }
+    else if (*it == "-S")
+    {
+      if (++it == cmd.end()) //-Sæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,å› ä¸ºbeginæœ‰ç¼ºçœå€¼,å› æ­¤è¿™æ˜¯å¯ä»¥çš„
         break;
-      string str = *(it);  // ÕÒµ½-SµÄÏÂÒ»Î»
-      if (str == "-E" || str == "-P" || str == "-T" || str == "-A" ||
-          str == "-D")  //-Sºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      string str = *(it);                                                                         // æ‰¾åˆ°-Sçš„ä¸‹ä¸€ä½
+      if (str == "-E" || str == "-P" || str == "-T" || str == "-A" || str == "-D" || str == "-a") //-Såä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         continue;
-      if (!isValidDate(str))  // Ê±¼ä²ÎÊı²»·ûºÏÒªÇó
+      if (!isValidDate(str)) // æ—¶é—´å‚æ•°ä¸ç¬¦åˆè¦æ±‚
       {
-        cout << "The parameter does not meet the requirements" << endl;
+        cout << "The start_time parameter does not meet the requirements" << endl;
         return false;
       }
 
       begin_time = to_time_t(str);
       it++;
-    } else if (*it == "-E") {
-      if (++it ==
-          cmd.end())  //-EÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÒòÎªendÓĞÈ±Ê¡Öµ,Òò´ËÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-E")
+    {
+      if (++it == cmd.end()) //-Eæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,å› ä¸ºendæœ‰ç¼ºçœå€¼,å› æ­¤è¿™æ˜¯å¯ä»¥çš„
         break;
-      string str = *(it);  // ÕÒµ½-SµÄÏÂÒ»Î»
-      if (str == "-S" || str == "-P" || str == "-T" || str == "-A" ||
-          str == "-D")  //-Sºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      string str = *(it);                                                                         // æ‰¾åˆ°-Sçš„ä¸‹ä¸€ä½
+      if (str == "-S" || str == "-P" || str == "-T" || str == "-A" || str == "-D" || str == "-a") //-Såä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         continue;
-      if (!isValidDate(str))  // Ê±¼ä²ÎÊı²»·ûºÏÒªÇó
+      if (!isValidDate(str)) // æ—¶é—´å‚æ•°ä¸ç¬¦åˆè¦æ±‚
       {
-        cout << "The parameter does not meet the requirements" << endl;
+        cout << "The end_time parameter does not meet the requirements" << endl;
         return false;
       }
 
       end_time = to_time_t(str);
       it++;
-    } else if (*it == "-P") {
-      if (++it == cmd.end())  //-PÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-P")
+    {
+      if (++it == cmd.end()) //-Pæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         break;
       string str = *(it);
-      if (str == "-S" || str == "-E" || str == "-T" || str == "-A" ||
-          str == "-D")  //-Pºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      if (str == "-S" || str == "-E" || str == "-T" || str == "-A" || str == "-D" || str == "-a") //-Påä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         continue;
       int p = stoi(str);
-      if (p != 1 && p != 2 && p != 3 && p != 4 && p != 5 && p != 6 && p != 7) {
-        cout << "The parameters do not meet the requirements";
+      if (p != 1 && p != 2 && p != 3 && p != 4 && p != 5 && p != 6 && p != 7)
+      {
+        cout << "The priority parameters do not meet the requirements";
         return false;
       }
 
       priority = p;
       it++;
-    } else if (*it == "-T") {
-      if (++it == cmd.end())  //-TÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+    }
+    else if (*it == "-T")
+    {
+      if (++it == cmd.end()) //-Tæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         break;
       string str = *(it);
-      if (str == "-S" || str == "-E" || str == "-P" || str == "-A" ||
-          str == "-D")  //-Tºó²»¸ú²ÎÊı,ÕâÊÇ¿ÉÒÔµÄ
+      if (str == "-S" || str == "-E" || str == "-P" || str == "-A" || str == "-D" || str == "-a") //-Tåä¸è·Ÿå‚æ•°,è¿™æ˜¯å¯ä»¥çš„
         continue;
 
       type = str;
       it++;
-    } else if (*it == "-A") {
-      if (++it == cmd.end()) {
-        cout << "No parameters after -A" << endl;
+    }
+    else if (*it == "-D") // é™åºè¾“å‡º
+    {
+      if (++it == cmd.end())
+      {
+        cout << "No parameters after -D" << endl;
         return false;
       }
       string str = *(it);
-      if (str[0] == '-')  // ²»·ûºÏ
+      if (str[0] == '-') // ä¸ç¬¦åˆ
       {
-        cout << "No parameters after -A" << endl;
+        cout << "No parameters after -D" << endl;
         return false;
       }
-      if (str != "b" && str != "begin" && str != "i" && str != "id" &&
-          str != "p" && str != "priority" && str != "r" && str != "remind") {
-        cout << "The parameter does not meet the requirements" << endl;
+      if (str != "b" && str != "begin" && str != "i" && str != "id" && str != "p" && str != "priority" && str != "r" && str != "remind")
+      {
+        cout << "The filter parameter does not meet the requirements" << endl;
         return false;
       }
 
@@ -549,20 +603,23 @@ bool ShowTaskOp(TaskList& task_list, list<string> cmd) {
         func = GreaterRemind;
 
       it++;
-    } else if (*it == "-D") {
-      if (++it == cmd.end()) {
-        cout << "No parameters after -D" << endl;
+    }
+    else if (*it == "-A") // å‡åºè¾“å‡º
+    {
+      if (++it == cmd.end())
+      {
+        cout << "No parameters after -A" << endl;
         return false;
       }
       string str = *(it);
-      if (str[0] == '-')  // ²»·ûºÏ
+      if (str[0] == '-') // ä¸ç¬¦åˆ
       {
-        cout << "No parameters after -D" << endl;
+        cout << "No parameters after -A" << endl;
         return false;
       }
-      if (str != "b" && str != "begin" && str != "i" && str != "id" &&
-          str != "p" && str != "priority" && str != "r" && str != "remind") {
-        cout << "The parameter does not meet the requirements" << endl;
+      if (str != "b" && str != "begin" && str != "i" && str != "id" && str != "p" && str != "priority" && str != "r" && str != "remind")
+      {
+        cout << "The filter parameter does not meet the requirements" << endl;
         return false;
       }
 
@@ -576,16 +633,27 @@ bool ShowTaskOp(TaskList& task_list, list<string> cmd) {
         func = LessRemind;
 
       it++;
-    } else {
+    }
+    else
+    {
       cout << "Invalid command" << endl;
       return false;
     }
   }
 
-  if (begin_time == -1) begin_time = 0;
-  if (end_time == -1) end_time = pow(2, 31) - 1;
-  if (priority == 0) priority = 7;
-  if (type == " ")
+  if (flagForAll) // showå…¨éƒ¨çš„ä»»åŠ¡å¹¶è¿”å›
+  {
+    task_list.Show();
+    return true;
+  }
+
+  if (begin_time == -1)
+    begin_time = 0;
+  if (end_time == -1)
+    end_time = pow(2, 31) - 1;
+  if (priority == 0)
+    priority = 7;
+  if (type == "-")
     task_list.Show(begin_time, end_time, priority, func);
   else
     task_list.Show(type, begin_time, end_time, priority, func);
@@ -593,23 +661,25 @@ bool ShowTaskOp(TaskList& task_list, list<string> cmd) {
   return true;
 }
 
-// Ê¹ÓÃËµÃ÷:deltask -n name -i id -a(-n,-i¿ÉÒÔ¾ùÃ»ÓĞ,-a´ú±íÉ¾³ıÈ«²¿ÈÎÎñ)
-bool DeleteTaskOp(TaskList& task_list, list<string> cmd) {
-  string name = "-";  // ±£´æĞèÒª²éÕÒµÄname,Ä¬ÈÏÎª"-"
+// ä½¿ç”¨è¯´æ˜:deltask -n name -i id -a(-n,-iå¯ä»¥å‡æ²¡æœ‰,-aä»£è¡¨åˆ é™¤å…¨éƒ¨ä»»åŠ¡)
+bool DeleteTaskOp(TaskList &task_list, list<string> cmd)
+{
+  string name = "-"; // ä¿å­˜éœ€è¦æŸ¥æ‰¾çš„name,é»˜è®¤ä¸º"-"
   int id = -1;
-  list<string>::iterator it = ++cmd.begin();  // ´ÓcmdµÄµÚ¶ş¸östring¿ªÊ¼²Î¿¼
+  list<string>::iterator it = ++cmd.begin(); // ä»cmdçš„ç¬¬äºŒä¸ªstringå¼€å§‹å‚è€ƒ
   bool flagForAll = false;
 
-  while (it != cmd.end()) {
-    if (*it == "-n")  // ²éÕÒËùÓÃµÄname
+  while (it != cmd.end())
+  {
+    if (*it == "-n") // æŸ¥æ‰¾æ‰€ç”¨çš„name
     {
-      if (++it == cmd.end())  //-nÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-næ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -n" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -n" << endl;
         return false;
@@ -617,23 +687,26 @@ bool DeleteTaskOp(TaskList& task_list, list<string> cmd) {
 
       name = str;
       it++;
-    } else if (*it == "-i")  // ²éÕÒËùÓÃµÄid
+    }
+    else if (*it == "-i") // æŸ¥æ‰¾æ‰€ç”¨çš„id
     {
-      if (++it == cmd.end())  //-idÊÇ×îºóÒ»¸ö,ºóÃæÃ»ÓĞ²ÎÊı
+      if (++it == cmd.end()) //-idæ˜¯æœ€åä¸€ä¸ª,åé¢æ²¡æœ‰å‚æ•°
       {
         cout << "No parameters after -i" << endl;
         return false;
       }
-      string str = *(it);  // ÕÒµ½-nameµÄÏÂÒ»Î»
-      if (str[0] == '-')   // ²»·ûºÏ
+      string str = *(it); // æ‰¾åˆ°-nameçš„ä¸‹ä¸€ä½
+      if (str[0] == '-')  // ä¸ç¬¦åˆ
       {
         cout << "No parameters after -i" << endl;
         return false;
       }
 
-      id = stoi(str);  // ±£´æĞèÒª´¦ÀíµÄid,ÎªÖ®ºóµÄ²éÕÒ×ö×¼±¸
+      id = stoi(str); // ä¿å­˜éœ€è¦å¤„ç†çš„id,ä¸ºä¹‹åçš„æŸ¥æ‰¾åšå‡†å¤‡
       it++;
-    } else if (*it == "-a") {
+    }
+    else if (*it == "-a")
+    {
       list<string>::iterator it1 = ++it;
       if (it1 == cmd.end() || *it1 == "-n" || *it1 == "-i")
         flagForAll = true;
@@ -641,7 +714,9 @@ bool DeleteTaskOp(TaskList& task_list, list<string> cmd) {
         return false;
 
       it = it1;
-    } else {
+    }
+    else
+    {
       cout << "Invalid command" << endl;
       return false;
     }
@@ -652,16 +727,17 @@ bool DeleteTaskOp(TaskList& task_list, list<string> cmd) {
   bool flag1 = it1 != task_list.return_end();
   bool flag2 = it2 != task_list.return_end();
 
-  bool flagForErase = (flag1 && flag2 && it1 == it2) || (!flag1 && flag2) ||
-                      (flag1 && !flag2);  // Ö¸Áî-nºÍ-iÕıÈ·
+  bool flagForErase = (flag1 && flag2 && it1 == it2) || (!flag1 && id == -1 && flag2) || (flag1 && name == "-" && !flag2); // æŒ‡ä»¤-nå’Œ-iæ­£ç¡®
 
-  if (flagForErase && flagForAll)  // É¾³ıÈ«²¿ÈÎÎñ
+  if (flagForErase && flagForAll) // åˆ é™¤å…¨éƒ¨ä»»åŠ¡
   {
     task_list.Clear();
-    task_list.saveFile();
+    task_list.saveFile(); // è®°å¾—å°†task_listä¸­ä¿å­˜çš„ä»»åŠ¡å†æ¬¡ä¿å­˜è‡³æ–‡ä»¶é‡Œ
 
     return true;
-  } else if (flagForErase && !flagForAll) {
+  }
+  else if (flagForErase && !flagForAll)
+  {
     if (flag1)
       task_list.Erase(id);
     else
@@ -670,59 +746,62 @@ bool DeleteTaskOp(TaskList& task_list, list<string> cmd) {
     task_list.saveFile();
 
     return true;
-  } else {
+  }
+  else
+  {
     task_list.saveFile();
+
+    cout << "The id and name used for deletion do not match" << endl;
 
     return false;
   }
 }
 
-
 bool AddTaskNoOp(TaskList& task_list){
-    // Ìí¼ÓÈÎÎñÃû×Ö
+    // æ·»åŠ ä»»åŠ¡åå­—
     Other newtask;
     std::cout << "Please input the name of the task" << endl;
     std::cin >> newtask.name;
-    // Ìí¼ÓÈÎÎñµÄ¿ªÊ¼Ê±¼ä
+    // æ·»åŠ ä»»åŠ¡çš„å¼€å§‹æ—¶é—´
     std::cout << "Please input the begin time of the task" << endl;
     std::cout << "Time format should be 2022/02/02/03:00:00" << endl;
     string begin_t;
     bool valid_input = false;
-    while (!valid_input)//¼ì²éÈÎÎñµÄ¿ªÊ¼Ê±¼äÊÇ²»ÊÇ%Y/%M/%D/%h:%m:%sµÄĞÎÊ½
+    while (!valid_input)//æ£€æŸ¥ä»»åŠ¡çš„å¼€å§‹æ—¶é—´æ˜¯ä¸æ˜¯%Y/%M/%D/%h:%m:%sçš„å½¢å¼
     {
         std::cin >> begin_t;
-        if (isValidDate(begin_t))//Èç¹ûÊÇÍË³öÑ­»·
+        if (isValidDate(begin_t))//å¦‚æœæ˜¯é€€å‡ºå¾ªç¯
             valid_input = true;
         else
-            std::cout << "Invalid format. Please try again." << endl;//·ñÔòÒ»Ö±ÊäÈëÖ±µ½ÊÇÎªÖ¹
+            std::cout << "Invalid format. Please try again." << endl;//å¦åˆ™ä¸€ç›´è¾“å…¥ç›´åˆ°æ˜¯ä¸ºæ­¢
     }
-    newtask.begin_time = to_time_t(begin_t);//½«ÓÃ»§ÊäÈëµÄĞÎÊ½×ª»¯³Étime_t¸ñÊ½±£´æ
-    // Ìí¼ÓÈÎÎñµÄÓÅÏÈ¼¶
+    newtask.begin_time = to_time_t(begin_t);//å°†ç”¨æˆ·è¾“å…¥çš„å½¢å¼è½¬åŒ–æˆtime_tæ ¼å¼ä¿å­˜
+    // æ·»åŠ ä»»åŠ¡çš„ä¼˜å…ˆçº§
     std::cout << "Please input the priority of the task" << endl;
     std::cout << "1-low, 2-medium, 4-high, default value or other value-low" << endl;
     std::cin >> newtask.priority;
-    // ¼ì²éÓÅÏÈ¼¶ÊÇ²»ÊÇ·ûºÏ1£¬2£¬4
+    // æ£€æŸ¥ä¼˜å…ˆçº§æ˜¯ä¸æ˜¯ç¬¦åˆ1ï¼Œ2ï¼Œ4
     while(!std::cin){
-      std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+      std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
       std::cout << "Invalid input. Please enter a valid priority: " << endl;
       std::cin >> newtask.priority;
     }
     if(newtask.priority != 1 && newtask.priority != 2 && newtask.priority != 4)
       newtask.priority = 1;
-    // Ìí¼ÓÈÎÎñµÄÖÖÀà
+    // æ·»åŠ ä»»åŠ¡çš„ç§ç±»
     std::cout << "Please input the type of the task, such as: entertainment  sport  study  routine" << endl;
     std::cout << "If you want a default type, please enter -." << endl;
     std::cin >> newtask.type;
     if(newtask.type[0] == '-')
       newtask.type = "default";
-    // Ìí¼ÓÈÎÎñµÄÌáĞÑÊ±¼ä
+    // æ·»åŠ ä»»åŠ¡çš„æé†’æ—¶é—´
     std::cout << "Please input the remind time of the task" << endl;
     std::cout << "Time format should be 2022/02/02/03:00:00" << endl;
     string remind_t;
     valid_input = false;
-    //¼ì²éÈÎÎñµÄ¿ªÊ¼Ê±¼äÊÇ²»ÊÇ%Y/%M/%D/%h:%m:%sµÄĞÎÊ½
+    //æ£€æŸ¥ä»»åŠ¡çš„å¼€å§‹æ—¶é—´æ˜¯ä¸æ˜¯%Y/%M/%D/%h:%m:%sçš„å½¢å¼
     while (!valid_input)
     {
         std::cin >> remind_t;
@@ -731,26 +810,26 @@ bool AddTaskNoOp(TaskList& task_list){
         else
             std::cout << "Invalid format. Please try again." << endl;
     }
-    newtask.remind_time = to_time_t(remind_t);//½«ÓÃ»§ÊäÈëµÄĞÎÊ½×ª»¯³Étime_t¸ñÊ½±£´æ
-    //idºÍ¿ªÊ¼Ê±¼äÒ»Ñù
+    newtask.remind_time = to_time_t(remind_t);//å°†ç”¨æˆ·è¾“å…¥çš„å½¢å¼è½¬åŒ–æˆtime_tæ ¼å¼ä¿å­˜
+    //idå’Œå¼€å§‹æ—¶é—´ä¸€æ ·
     int id = to_time_t(begin_t)%1000;
     while(task_list.FindTask(id) != task_list.return_end()){
         id++;
     }
     int res = task_list.Add(make_pair(id, newtask));
-    while ( res!= 0){//Èç¹ûÓÃ»§ÊäÈëµÄ¿ªÊ¼Ê±¼ä»òÃû×ÖÖØ¸´ÁË£¬·µ»ØÖµ²»ÊÇ0
+    while ( res!= 0){//å¦‚æœç”¨æˆ·è¾“å…¥çš„å¼€å§‹æ—¶é—´æˆ–åå­—é‡å¤äº†ï¼Œè¿”å›å€¼ä¸æ˜¯0
         if(res==-1){
             std::cout << "The begin time repeats! Please enter another begin time: " << endl;
             bool valid_input = false;
-            while (!valid_input)//¼ì²éÈÎÎñµÄ¿ªÊ¼Ê±¼äÊÇ²»ÊÇ%Y/%M/%D/%h:%m:%sµÄĞÎÊ½
+            while (!valid_input)//æ£€æŸ¥ä»»åŠ¡çš„å¼€å§‹æ—¶é—´æ˜¯ä¸æ˜¯%Y/%M/%D/%h:%m:%sçš„å½¢å¼
             {
                 std::cin >> begin_t;
-                if (isValidDate(begin_t))//Èç¹ûÊÇÍË³öÑ­»·
+                if (isValidDate(begin_t))//å¦‚æœæ˜¯é€€å‡ºå¾ªç¯
                     valid_input = true;
                 else
-                    std::cout << "Invalid format. Please try again." << endl;//·ñÔòÒ»Ö±ÊäÈëÖ±µ½ÊÇÎªÖ¹
+                    std::cout << "Invalid format. Please try again." << endl;//å¦åˆ™ä¸€ç›´è¾“å…¥ç›´åˆ°æ˜¯ä¸ºæ­¢
             }
-            newtask.begin_time = to_time_t(begin_t);//½«ÓÃ»§ÊäÈëµÄĞÎÊ½×ª»¯³Étime_t¸ñÊ½±£´æ
+            newtask.begin_time = to_time_t(begin_t);//å°†ç”¨æˆ·è¾“å…¥çš„å½¢å¼è½¬åŒ–æˆtime_tæ ¼å¼ä¿å­˜
             id = to_time_t(begin_t)%1000;
             while(task_list.FindTask(id) == task_list.return_end()){
                 id++;
@@ -772,10 +851,10 @@ bool DeleteTaskNoOp(TaskList& task_list){
 
   int choice;
   std::cin >> choice;
-  while (!std::cin) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+  while (!std::cin) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
   {
-    std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+    std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
     std::cout << "Invalid input. Please enter a valid ID: " << endl;
     std::cin >> choice;
@@ -785,18 +864,18 @@ bool DeleteTaskNoOp(TaskList& task_list){
     std::cout << "Please input the ID of the task to be deleted" << endl;
     long long id;
     std::cin >> id;
-    while (!std::cin || !task_list.Erase(id)) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§ÒÔ¼°idÊÇ·ñ´æÔÚ
-    {	//ÔÚÊäÈëÓĞĞ§µÄÇé¿öÏÂ²Å»áÖ´ĞĞErase²¢ÅĞ¶Ï·µ»ØÖµ
+    while (!std::cin || !task_list.Erase(id)) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆä»¥åŠidæ˜¯å¦å­˜åœ¨
+    {	//åœ¨è¾“å…¥æœ‰æ•ˆçš„æƒ…å†µä¸‹æ‰ä¼šæ‰§è¡ŒEraseå¹¶åˆ¤æ–­è¿”å›å€¼
       if(!std::cin){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Invalid input. Please enter a valid ID: " << endl;
         std::cin >> id;
       }
       else if(!task_list.Erase(id)){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Can not find this id. Please enter a valid ID: " << endl;
         std::cin >> id;
@@ -805,20 +884,20 @@ bool DeleteTaskNoOp(TaskList& task_list){
   }
   else
   {
-    std::cout << "Please input the name of the task to be deleted" << endl; // ¸ù¾İÃû³ÆÉ¾³ıÈÎÎñ
+    std::cout << "Please input the name of the task to be deleted" << endl; // æ ¹æ®åç§°åˆ é™¤ä»»åŠ¡
     string taskName;
     std::cin >> taskName;
     while (!task_list.Erase(taskName))
     {
-      std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+      std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
       std::cout << "Can not find this name. Please enter a valid name: " << endl;
       std::cin >> taskName;
     }
 
   }
-  task_list.saveFile();//±£´æÎÄ¼ş
+  task_list.saveFile();//ä¿å­˜æ–‡ä»¶
   return true;
 }
 
@@ -831,10 +910,10 @@ bool ShowTaskNoOp( TaskList& task_list){
 
 			int option;
 			std::cin >> option;
-			while (!std::cin) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+			while (!std::cin) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
 			{
-				std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-				std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+				std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+				std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
 				std::cout << "Invalid input. Please enter a valid choice: " << endl;
 				std::cin >> option;
@@ -843,13 +922,13 @@ bool ShowTaskNoOp( TaskList& task_list){
 			int startTime = 0;
 			string startTimeStr = "";
 			string endTimeStr = "";
-			string c;//ÓÉÓÃ»§¾ö¶¨ÊÇ·ñÒªÉè¶¨Ê±¼ä
+			string c;//ç”±ç”¨æˆ·å†³å®šæ˜¯å¦è¦è®¾å®šæ—¶é—´
 			int endTime = pow(2, 31) - 1;
 
 			switch (option)
 			{
 			case 0:
-				task_list.Show(); // ÏÔÊ¾ËùÓĞÈÎÎñ
+				task_list.Show(); // æ˜¾ç¤ºæ‰€æœ‰ä»»åŠ¡
 				break;
 			case 1:
 				std::cout << "1 for low, 2 for medium, 4 for high" << endl;
@@ -861,15 +940,15 @@ bool ShowTaskNoOp( TaskList& task_list){
 					std::cout << "invalid" << endl;
 					std::cin >> priority;
 				}
-				while (!std::cin) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+				while (!std::cin) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
 				{
-					std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-					std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+					std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+					std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
 					std::cout << "Invalid input. Please enter a valid choice: " << endl;
 					std::cin >> priority;
 				}
-				task_list.Show(0, pow(2, 31) - 1, priority); // ¸ù¾İÓÅÏÈ¼¶ÏÔÊ¾ÈÎÎñ
+				task_list.Show(0, pow(2, 31) - 1, priority); // æ ¹æ®ä¼˜å…ˆçº§æ˜¾ç¤ºä»»åŠ¡
 				break;
 			case 2:
 				std::cout << "If you want to see all the tasks before the specified date, enter y/n" << endl;
@@ -911,7 +990,7 @@ bool ShowTaskNoOp( TaskList& task_list){
 				if (endTimeStr != "")
 					endTime = to_time_t(endTimeStr);
 
-				task_list.Show(startTime, endTime); // ¸ù¾İÊ±¼ä·¶Î§ÏÔÊ¾ÈÎÎñ
+				task_list.Show(startTime, endTime); // æ ¹æ®æ—¶é—´èŒƒå›´æ˜¾ç¤ºä»»åŠ¡
 				break;
 			case 3:
 				std::cout << "1 for low, 2 for medium, 4 for high" << endl;
@@ -923,10 +1002,10 @@ bool ShowTaskNoOp( TaskList& task_list){
 					std::cout << "invalid" << endl;
 					std::cin >> priority;
 				}
-				while (!std::cin) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+				while (!std::cin) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
 				{
-					std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-					std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+					std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+					std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
 					std::cout << "Invalid input. Please enter a valid choice: " << endl;
 					std::cin >> priority;
@@ -969,7 +1048,7 @@ bool ShowTaskNoOp( TaskList& task_list){
 				if (endTimeStr != "")
 					endTime = to_time_t(endTimeStr);
 
-				task_list.Show(startTime, endTime, priority); // ¸ù¾İÊ±¼ä·¶Î§ºÍÓÅÏÈ¼¶
+				task_list.Show(startTime, endTime, priority); // æ ¹æ®æ—¶é—´èŒƒå›´å’Œä¼˜å…ˆçº§
 			}
       return true;
 }
@@ -979,10 +1058,10 @@ bool ModifyTaskNoOp(TaskList& task_list){
   std::cout << "1 represents search based on ID\nwhile the remaining represents search based on name" << endl;
   int choice;
   std::cin >> choice;
-  while (!std::cin) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+  while (!std::cin) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
   {
-    std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+    std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
     std::cout << "Invalid input. Please enter a valid choice: " << endl;
     std::cin >> choice;
@@ -996,18 +1075,18 @@ bool ModifyTaskNoOp(TaskList& task_list){
     std::cout << "please input the id of the wanted task" << endl;
     long long id;
     std::cin >> id;
-    while (!std::cin || !task_list.FindShow(id)) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+    while (!std::cin || !task_list.FindShow(id)) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
     {
       if(!std::cin){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Invalid input. Please enter a valid id: " << endl;
         std::cin >> id;
       }
       else if(!task_list.FindShow(id)){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Can not find this id. Please enter a valid id: " << endl;
         std::cin >> id;
@@ -1021,11 +1100,11 @@ bool ModifyTaskNoOp(TaskList& task_list){
     string idx;
     std::cin >> idx;
 
-    while (!task_list.FindShow(idx)) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+    while (!task_list.FindShow(idx)) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
     {
       if(!task_list.FindShow(idx)){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Can not find this name. Please enter a valid id: " << endl;
         std::cin >> idx;
@@ -1097,10 +1176,10 @@ bool SearchTaskNoOp(TaskList& task_list){
   std::cout << "1 represents search based on ID\nwhile the remaining represents search based on name" << endl;
   int choice;
   std::cin >> choice;
-  while (!std::cin) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+  while (!std::cin) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
   {
-    std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+    std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
     std::cout << "Invalid input. Please enter a valid choice: " << endl;
     std::cin >> choice;
@@ -1111,18 +1190,18 @@ bool SearchTaskNoOp(TaskList& task_list){
     std::cout << "please input the id of the wanted task" << endl;
     long long id;
     std::cin >> id;
-    while (!std::cin || !task_list.FindShow(id)) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+    while (!std::cin || !task_list.FindShow(id)) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
     {
       if(!std::cin){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Invalid input. Please enter a valid id: " << endl;
         std::cin >> id;
       }
       else if(!task_list.FindShow(id)){
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Can not find this id. Please enter a valid id: " << endl;
         std::cin >> id;
@@ -1133,10 +1212,10 @@ bool SearchTaskNoOp(TaskList& task_list){
     std::cout << "please input the name of the wanted task" << endl;
     string ix;
     std::cin >> ix;
-    while (!task_list.FindShow(ix)) // ¼ì²éÊäÈëÊÇ·ñÓĞĞ§
+    while (!task_list.FindShow(ix)) // æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰æ•ˆ
     {
-        std::cin.clear(); // Çå³ıÊäÈëÁ÷×´Ì¬±êÖ¾
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ºöÂÔÊ£ÓàµÄÊäÈë
+        std::cin.clear(); // æ¸…é™¤è¾“å…¥æµçŠ¶æ€æ ‡å¿—
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // å¿½ç•¥å‰©ä½™çš„è¾“å…¥
 
         std::cout << "Can not find this name. Please enter a valid id: " << endl;
         std::cin >> ix;
