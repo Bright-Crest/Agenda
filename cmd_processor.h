@@ -29,11 +29,12 @@ bool ModifyTaskNoOp(TaskList& task_list);
 bool DeleteTaskNoOp(TaskList& task_list);
 bool ShowTaskNoOp(TaskList& task_list);
 bool SearchTaskNoOp(TaskList& task_list);
+bool should_quit(string choice);
 
 // All ops(options) start with "-" and have only one character.
 bool AddTaskOp(TaskList& task_list, list<string> cmd);  // ops: "n:b:r:pt"
-bool ModifyTaskOp(TaskList& task_list, list<string> cmd);  // "i:n:C:T" i--id, n--name, C--Change, T--To. id ºÍ name ÓĞÒ»¸ö¼´¿É¡£C ºó½ÓÒª¸Ä±äµÄ¶«Î÷£¬Èçnbrpt(name,begin_time...), ²»ÂÛÊÇ¼òĞ´»¹ÊÇÍêÕûµÄ¶¼ÒªÖ§³Ö¡£T ºó½Ó±ä³ÉµÄÄÚÈİ£¬×¢ÒâÒª¼ì²é¡£
+bool ModifyTaskOp(TaskList& task_list, list<string> cmd);  // "i:n:C:T" i--id, n--name, C--Change, T--To. id å’Œ name æœ‰ä¸€ä¸ªå³å¯ã€‚C åæ¥è¦æ”¹å˜çš„ä¸œè¥¿ï¼Œå¦‚nbrpt(name,begin_time...), ä¸è®ºæ˜¯ç®€å†™è¿˜æ˜¯å®Œæ•´çš„éƒ½è¦æ”¯æŒã€‚T åæ¥å˜æˆçš„å†…å®¹ï¼Œæ³¨æ„è¦æ£€æŸ¥ã€‚
 bool DeleteTaskOp(TaskList& task_list, list<string> cmd);   // "i:n:a" a--all.
-bool ShowTaskOp(TaskList& task_list, list<string> cmd);  // "S:E:p:t:A:D:" S--Start, E--End, A--Ascending, D--Descending. A ºÍ D ºó½Óinbrp(id, name, begin_time, remind_time, priority), ÓÃÓÚÅÅĞò¡£
+bool ShowTaskOp(TaskList& task_list, list<string> cmd);  // "S:E:p:t:A:D:" S--Start, E--End, A--Ascending, D--Descending. A å’Œ D åæ¥inbrp(id, name, begin_time, remind_time, priority), ç”¨äºæ’åºã€‚
 bool SearchTaskOp(TaskList& task_list, list<string> cmd);  // "i:n:"
 
