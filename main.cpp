@@ -197,6 +197,49 @@ int main(int argc, const char* argv[]) {
 
 void CopyRight() {
 
+  stringstream ss;
+
+  ss << "版权所有 (c) [2023] [徐菲悦]" << endl
+    << "                   [赵哲浩]" << endl
+    << "                   [朱施政]" << endl
+    << "                   [朱舟政]" << endl
+    << "" << endl
+    << "开发团队:" << endl
+    << "    - [徐菲悦]：完成类TaskList的Load()、SaveFile()函数实现" << endl
+    << "               完成Functions tools 里的函数的定义与声明" << endl
+    << "               完成Functions tools 里的函数的定义与声明" << endl
+    << "               完成图形界面的设计" << endl
+    << "" << endl
+    << "    - [赵哲浩]:完成了类TaskList的public Show()、private Show() 、get_priority_string()、show_with_one_priority()、show_with_two_priority()、show_with_all_priority()函数实现" << endl
+    << "              参与完成了类TaskList的Remind()、ShowTask()函数实现" << endl
+    << "              参与完成了CmdProcessor里的5个NoOp函数的实现" << endl
+    << "              参与完成了程序多线程运行的实现" << endl
+    << "" << endl
+    << "    - [朱施政]：完成类TaskList的Add()函数实现" << endl
+    << "               完成类CmdProcessor里5个Op函数的实现" << endl
+    << "               参与帮助文档和版权的编写" << endl
+    << "" << endl
+    << "    - [朱舟政]：完成类TaskList的主要构思（头文件）" << endl
+    << "               完成类CmdProcessor的所有构思及其所有成员函数实现，并确定了cmd_processor.h中的包裹函数的声明" << endl
+    << "               完成类AccountManager的所有实现，以及account_manager.h中的包裹函数的所有实现" << endl
+    << "               完成file_encrypt.h中所有函数实现，涉及文件加密解密" << endl
+    << "               完成main函数的设计" << endl
+    << "" << endl
+    << "" << endl
+    << "版本: [1.0.1]" << endl
+    << "最后更新时间: [2023/07/09]" << endl
+    << "" << endl
+    << "本软件受版权法和国际版权条约的保护。未经授权，严禁复制、修改、分发、展示或进行其他侵犯著作权的行为" << endl
+    << "" << endl
+    << "除非获得[徐菲悦]" << endl
+    << "       [赵哲浩]" << endl
+    << "       [朱施政]" << endl
+    << "       [朱舟政]的书面许可，否则不得在本软件的副本中进行复制、修改、分发或其他操作。" << endl
+    << "" << endl
+    << "如有任何疑问或意见，请联系开发团队" << endl
+    << "" << endl;
+
+     cout << ss.str();
 }
 
 void Help() {
