@@ -14,6 +14,7 @@
 using namespace std;
 
 extern mutex mtx;
+extern void Help();
 
 bool should_quit(string choice){
   return (choice == "q" || choice == "quit");
