@@ -172,18 +172,19 @@ vector<pair<int, Other>>::iterator TaskList::FindTask(string name){
 	}
 	return task_list_.end();
 }
-void TaskList::ShowTask(vector<pair<int, Other>>::iterator it) const{
+void TaskList::ShowTask(vector<pair<int, Other>>::iterator it) const {
 	// TODO ShowTask
 	string showbegintime = to_string_t(it->second.begin_time);
 	string showremindtime = to_string_t(it->second.remind_time);
-	std::cout << "----------------------------------------------------------------------------------------------------" << endl;
-	std::cout << std::setw(14) << it->first << '\t'
-		<< std::setw(14) << it->second.name << '\t'
-		<< std::setw(14) << showbegintime << '\t'
-		<< it->second.priority << '\t'
-		<< std::setw(14) << it->second.type << '\t'
-		<< std::setw(14) << showremindtime << endl;;
-	std::cout << "----------------------------------------------------------------------------------------------------" << endl;
+	string sPriority = get_priority_string(it->second.priority);
+	std::cout << "----------------------------------------------------------------" << endl;
+			std::cout << std::setw(14) << "ID: " << it->first << endl
+				<< std::setw(14) << "Name: " << it->second.name << endl
+				<< std::setw(14) << "Begin time: " << showbegintime << endl
+				<< std::setw(14) << "Priority: " << sPriority << endl
+				<< std::setw(14) << "Type: " << it->second.type << endl
+				<< std::setw(14) << "Remind time: " << showremindtime << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
 }
 void TaskList::ShowHead() const{
 	// TODO ShowHead
@@ -288,7 +289,7 @@ string TaskList::get_priority_string(int Priority) const{
 
 // 私有函数，处理展示一个优先级的事件的要求
 void TaskList::Show_with_one_priority(int start, int end, int Priority,
-	vector<pair<int, Other>>& vec) const{
+	vector<pair<int, Other>>& vec) const {
 	string sPriority = get_priority_string(Priority);
 
 	int i = 0;
@@ -301,7 +302,8 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
 		if (vec[i].second.priority == Priority)
 		{
 			std::cout << "----------------------------------------------------------------" << endl;
-			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+			std::cout << std::setw(14) << "ID: " << vec[i].first << endl
+				<< std::setw(14) << "Name: " << vec[i].second.name << endl
 				<< std::setw(14) << "Begin time: " << b_t << endl
 				<< std::setw(14) << "Priority: " << sPriority << endl
 				<< std::setw(14) << "Type: " << vec[i].second.type << endl
@@ -316,7 +318,7 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
 // 私有函数，处理展示两个优先级的事件的要求
 void TaskList::Show_with_two_priority(int start, int end, int Priority1,
 	int Priority2,
-	vector<pair<int, Other>>& vec) const{
+	vector<pair<int, Other>>& vec) const {
 	string sPriority1 = get_priority_string(Priority1);
 	string sPriority2 = get_priority_string(Priority2);
 
@@ -324,13 +326,14 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
 	for (; i < vec.size() && vec[i].second.begin_time < start; i++)
 		;
 	for (; i < vec.size() && vec[i].second.begin_time <= end; i++) {
-	
+
 		string b_t = to_string_t(vec[i].second.begin_time);
 		string r_t = to_string_t(vec[i].second.remind_time);
 		if (vec[i].second.priority == Priority1)
 		{
 			std::cout << "----------------------------------------------------------------" << endl;
-			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+			std::cout << std::setw(14) << "ID: " << vec[i].first << endl
+				<< std::setw(14) << "Name: " << vec[i].second.name << endl
 				<< std::setw(14) << "Begin time: " << b_t << endl
 				<< std::setw(14) << "Priority: " << sPriority1 << endl
 				<< std::setw(14) << "Type: " << vec[i].second.type << endl
@@ -340,7 +343,8 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
 		else if (vec[i].second.priority == Priority2)
 		{
 			std::cout << "----------------------------------------------------------------" << endl;
-			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+			std::cout << std::setw(14) << "ID: " << vec[i].first << endl
+				<< std::setw(14) << "Name: " << vec[i].second.name << endl
 				<< std::setw(14) << "Begin time: " << b_t << endl
 				<< std::setw(14) << "Priority: " << sPriority2 << endl
 				<< std::setw(14) << "Type: " << vec[i].second.type << endl
@@ -355,7 +359,7 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
 
 // 私有函数，处理展示全部优先级的事件的要求
 void TaskList::Show_with_all_priority(int start, int end,
-	vector<pair<int, Other>>& vec) const{
+	vector<pair<int, Other>>& vec) const {
 	int i = 0;
 	for (; i < vec.size() && vec[i].second.begin_time < start; i++)
 		;
@@ -366,20 +370,22 @@ void TaskList::Show_with_all_priority(int start, int end,
 		if (vec[i].second.priority == 4)
 		{
 			std::cout << "----------------------------------------------------------------" << endl;
-			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+			std::cout << std::setw(14) << "ID: " << vec[i].first << endl
+				<< std::setw(14) << "Name: " << vec[i].second.name << endl
 				<< std::setw(14) << "Begin time: " << b_t << endl
-				<< std::setw(14) << "Priority: " << 4<< endl
+				<< std::setw(14) << "Priority: " << "High" << endl
 				<< std::setw(14) << "Type: " << vec[i].second.type << endl
 				<< std::setw(14) << "Remind time: " << r_t << endl;
 			std::cout << "----------------------------------------------------------------" << endl;
 		}
-		
+
 		else if (vec[i].second.priority == 2)
 		{
 			std::cout << "----------------------------------------------------------------" << endl;
-			std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+			std::cout << std::setw(14) << "ID: " << vec[i].first << endl
+				<< std::setw(14) << "Name: " << vec[i].second.name << endl
 				<< std::setw(14) << "Begin time: " << b_t << endl
-				<< std::setw(14) << "Priority: " << 2 << endl
+				<< std::setw(14) << "Priority: " << "Medium" << endl
 				<< std::setw(14) << "Type: " << vec[i].second.type << endl
 				<< std::setw(14) << "Remind time: " << r_t << endl;
 			std::cout << "----------------------------------------------------------------" << endl;
@@ -388,13 +394,14 @@ void TaskList::Show_with_all_priority(int start, int end,
 		else if (vec[i].second.priority == 1)
 		{
 			std::cout << "----------------------------------------------------------------" << endl;
-		std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
-			<< std::setw(14) << "Begin time: " << b_t << endl
-			<< std::setw(14) << "Priority: " << 1 << endl
-			<< std::setw(14) << "Type: " << vec[i].second.type << endl
-			<< std::setw(14) << "Remind time: " << r_t << endl;
-		std::cout << "----------------------------------------------------------------" << endl;
-	}
+			std::cout << std::setw(14) << "ID: " << vec[i].first << endl
+				<< std::setw(14) << "Name: " << vec[i].second.name << endl
+				<< std::setw(14) << "Begin time: " << b_t << endl
+				<< std::setw(14) << "Priority: " << "Low" << endl
+				<< std::setw(14) << "Type: " << vec[i].second.type << endl
+				<< std::setw(14) << "Remind time: " << r_t << endl;
+			std::cout << "----------------------------------------------------------------" << endl;
+		}
 
 	}
 
@@ -403,30 +410,21 @@ void TaskList::Show_with_all_priority(int start, int end,
 
 void TaskList::Remind() {
 
-	// TODO Remind
 	const time_t kTolerantTime = 2;
-	//bool flag = false;
-	//cout << "hello" << endl;
 	for (auto it = task_list_.begin(); it != task_list_.end(); it++) {
 		if (it->second.remind_time < time(NULL) - kTolerantTime)
-			{
-				break;
-			}
-			if (it->second.remind_time > time(NULL) + kTolerantTime) continue;
-			else {
-				///if (!flag) {
-					cout << endl;
-					cout << "Attention: "<<it->second.name<<"the following task(s) should be done!\n";
-					ShowTask(it);
-			//	flag = true;
-				//}
-
-			}
-			/*if (it->second.remind_time == time(NULL))
-			{
-				cout << it->second.name << endl;
-			}*/
+		{
+			break;
 		}
-		//std::this_thread::sleep_for(std::chrono::seconds(1));
-		
+		if (it->second.remind_time > time(NULL) + kTolerantTime) continue;
+		else {
+			
+			cout << endl;
+			cout << "Attention: " << it->second.name << " the following task(s) should be done!\n";
+			ShowTask(it);
+			
+
+		}
 	}
+
+}
