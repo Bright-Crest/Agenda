@@ -71,20 +71,20 @@ int TaskList::Add(pair<int, Other> task) {
 
   for (i = 0; i < task_list_.size(); i++) {
     if (task_list_[i].second.remind_time <
-        task.second.remind_time)  // ÕÒµ½taskÔÚ°´remind_time_´Ó´óµ½Ğ¡ÅÅĞòµÄvector
-                                  // task_list_ÖĞµÄÎ»ÖÃ
+        task.second.remind_time)  // æ‰¾åˆ°taskåœ¨æŒ‰remind_time_ä»å¤§åˆ°å°æ’åºçš„vector
+                                  // task_list_ä¸­çš„ä½ç½®
       break;
   }
 
   task_list_.insert(task_list_.begin() + i,
-                    task);  // Íê³É²åÈë,´ËÊ±vectorÊÇÓĞĞòµÄ
+                    task);  // å®Œæˆæ’å…¥,æ­¤æ—¶vectoræ˜¯æœ‰åºçš„
 
   ofstream write;
   write.open(
       file_,
-      ios::app);  // ´ò¿ªÎÄ¼ş,ÎÄ¼şÖ¸ÕëÔÚÎÄ¼şÎ²²¿,½«ĞÂÔöµÄĞÅÏ¢±£´æÔÚÎÄ¼ş×îºóÒ»ĞĞ
+      ios::app);  // æ‰“å¼€æ–‡ä»¶,æ–‡ä»¶æŒ‡é’ˆåœ¨æ–‡ä»¶å°¾éƒ¨,å°†æ–°å¢çš„ä¿¡æ¯ä¿å­˜åœ¨æ–‡ä»¶æœ€åä¸€è¡Œ
 
-  // ½«intÀàĞÍµÄbegin_timeºÍremind_time×ª»¯Îª¿ÉĞ´ÈëÎÄ¼şµÄ×Ö·û´®begin_time_strºÍremind_time_str
+  // å°†intç±»å‹çš„begin_timeå’Œremind_timeè½¬åŒ–ä¸ºå¯å†™å…¥æ–‡ä»¶çš„å­—ç¬¦ä¸²begin_time_strå’Œremind_time_str
   time_t begin_time_ = static_cast<time_t>(task.second.begin_time);
   time_t remind_time_ = static_cast<time_t>(task.second.remind_time);
   char begin_time_str[80];
@@ -204,19 +204,19 @@ void TaskList::ShowHead() const {
 void TaskList::Show(int start, int end, int priority_range,
                     bool (*Compare)(pair<int, Other> task1,
                                     pair<int, Other> task2)) const {
-  // ´´½¨¸±±¾²¢°´begin_timeÅÅĞò
+  // åˆ›å»ºå‰¯æœ¬å¹¶æŒ‰begin_timeæ’åº
   vector<pair<int, Other>> tmp(task_list_);
 
   sort(tmp.begin(), tmp.end(), Compare);
 
-  // µ÷ÓÃË½ÓĞº¯ÊıÕ¹Ê¾tmp
+  // è°ƒç”¨ç§æœ‰å‡½æ•°å±•ç¤ºtmp
   Show(tmp, start, end, priority_range);
 }
 
 void TaskList::Show(string type, int start, int end, int priority_range,
                     bool (*Compare)(pair<int, Other> task1,
                                     pair<int, Other> task2)) const {
-  // ´´½¨Ö»º¬typeÀàĞÍµÄÊ±¼äµÄ¸±±¾²¢ÅÅĞò
+  // åˆ›å»ºåªå«typeç±»å‹çš„æ—¶é—´çš„å‰¯æœ¬å¹¶æ’åº
   vector<pair<int, Other>> tmp;
   for (int i = 0; i < task_list_.size(); i++) {
     if (type.compare(task_list_[i].second.type) == 0)
@@ -225,14 +225,14 @@ void TaskList::Show(string type, int start, int end, int priority_range,
 
   sort(tmp.begin(), tmp.end(), Compare);
 
-  // µ÷ÓÃË½ÓĞº¯ÊıÕ¹Ê¾tmp
+  // è°ƒç”¨ç§æœ‰å‡½æ•°å±•ç¤ºtmp
   Show(tmp, start, end, priority_range);
 }
 
-// Ë½ÓĞº¯Êıshow£¬Õ¹Ê¾vecÖĞbegin_time½éÓÚstartÓëendÖ®¼ä£¬priorityÔÚpriority_rangeÄÚµÄÊÂ¼ş
+// ç§æœ‰å‡½æ•°showï¼Œå±•ç¤ºvecä¸­begin_timeä»‹äºstartä¸endä¹‹é—´ï¼Œpriorityåœ¨priority_rangeå†…çš„äº‹ä»¶
 void TaskList::Show(vector<pair<int, Other>>& vec, int start, int end,
                     int priority_range) const {
-  // ¸ù¾İpriority½øĞĞÇø·Ö
+  // æ ¹æ®priorityè¿›è¡ŒåŒºåˆ†
   switch (priority_range) {
     case 4: {
       Show_with_one_priority(start, end, 4, vec);
@@ -265,7 +265,7 @@ void TaskList::Show(vector<pair<int, Other>>& vec, int start, int end,
   }
 }
 
-// Ë½ÓĞº¯Êı£¬¸ù¾İpriorityµÄ´úÂë·µ»Ø¶ÔÓ¦µÄÓÅÏÈ¼¶×Ö·û´®
+// ç§æœ‰å‡½æ•°ï¼Œæ ¹æ®priorityçš„ä»£ç è¿”å›å¯¹åº”çš„ä¼˜å…ˆçº§å­—ç¬¦ä¸²
 string TaskList::get_priority_string(int Priority) const {
   switch (Priority) {
     case 4: {
@@ -283,7 +283,7 @@ string TaskList::get_priority_string(int Priority) const {
   }
 }
 
-// Ë½ÓĞº¯Êı£¬´¦ÀíÕ¹Ê¾Ò»¸öÓÅÏÈ¼¶µÄÊÂ¼şµÄÒªÇó
+// ç§æœ‰å‡½æ•°ï¼Œå¤„ç†å±•ç¤ºä¸€ä¸ªä¼˜å…ˆçº§çš„äº‹ä»¶çš„è¦æ±‚
 void TaskList::Show_with_one_priority(int start, int end, int Priority,
                                       vector<pair<int, Other>>& vec) const {
   string sPriority = get_priority_string(Priority);
@@ -299,7 +299,8 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
       std::cout
           << "----------------------------------------------------------------"
           << endl;
-      std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+      std::cout << std::setw(14) << "ID:" << vec[i].first << endl
+                 <<std::setw(14) << "Name: " << vec[i].second.name << endl
                 << std::setw(14) << "Begin time: " << b_t << endl
                 << std::setw(14) << "Priority: " << sPriority << endl
                 << std::setw(14) << "Type: " << vec[i].second.type << endl
@@ -313,7 +314,7 @@ void TaskList::Show_with_one_priority(int start, int end, int Priority,
   std::cout << endl;
 }
 
-// Ë½ÓĞº¯Êı£¬´¦ÀíÕ¹Ê¾Á½¸öÓÅÏÈ¼¶µÄÊÂ¼şµÄÒªÇó
+// ç§æœ‰å‡½æ•°ï¼Œå¤„ç†å±•ç¤ºä¸¤ä¸ªä¼˜å…ˆçº§çš„äº‹ä»¶çš„è¦æ±‚
 void TaskList::Show_with_two_priority(int start, int end, int Priority1,
                                       int Priority2,
                                       vector<pair<int, Other>>& vec) const {
@@ -330,9 +331,10 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
       std::cout
           << "----------------------------------------------------------------"
           << endl;
-      std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+      std::cout << std::setw(14) << "ID:" << vec[i].first << endl
+                 <<std::setw(14) << "Name: " << vec[i].second.name << endl
                 << std::setw(14) << "Begin time: " << b_t << endl
-                << std::setw(14) << "Priority: " << sPriority1 << endl
+                << std::setw(14) << "Priority: " << sPriority << endl
                 << std::setw(14) << "Type: " << vec[i].second.type << endl
                 << std::setw(14) << "Remind time: " << r_t << endl;
       std::cout
@@ -342,9 +344,10 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
       std::cout
           << "----------------------------------------------------------------"
           << endl;
-      std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+      std::cout << std::setw(14) << "ID:" << vec[i].first << endl
+                 <<std::setw(14) << "Name: " << vec[i].second.name << endl
                 << std::setw(14) << "Begin time: " << b_t << endl
-                << std::setw(14) << "Priority: " << sPriority2 << endl
+                << std::setw(14) << "Priority: " << sPriority << endl
                 << std::setw(14) << "Type: " << vec[i].second.type << endl
                 << std::setw(14) << "Remind time: " << r_t << endl;
       std::cout
@@ -356,7 +359,7 @@ void TaskList::Show_with_two_priority(int start, int end, int Priority1,
   std::cout << endl;
 }
 
-// Ë½ÓĞº¯Êı£¬´¦ÀíÕ¹Ê¾È«²¿ÓÅÏÈ¼¶µÄÊÂ¼şµÄÒªÇó
+// ç§æœ‰å‡½æ•°ï¼Œå¤„ç†å±•ç¤ºå…¨éƒ¨ä¼˜å…ˆçº§çš„äº‹ä»¶çš„è¦æ±‚
 void TaskList::Show_with_all_priority(int start, int end,
                                       vector<pair<int, Other>>& vec) const {
   int i = 0;
@@ -369,9 +372,10 @@ void TaskList::Show_with_all_priority(int start, int end,
       std::cout
           << "----------------------------------------------------------------"
           << endl;
-      std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+      std::cout << std::setw(14) << "ID:" << vec[i].first << endl
+                 <<std::setw(14) << "Name: " << vec[i].second.name << endl
                 << std::setw(14) << "Begin time: " << b_t << endl
-                << std::setw(14) << "Priority: " << 4 << endl
+                << std::setw(14) << "Priority: " << sPriority << endl
                 << std::setw(14) << "Type: " << vec[i].second.type << endl
                 << std::setw(14) << "Remind time: " << r_t << endl;
       std::cout
@@ -383,9 +387,10 @@ void TaskList::Show_with_all_priority(int start, int end,
       std::cout
           << "----------------------------------------------------------------"
           << endl;
-      std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+     std::cout << std::setw(14) << "ID:" << vec[i].first << endl
+                 <<std::setw(14) << "Name: " << vec[i].second.name << endl
                 << std::setw(14) << "Begin time: " << b_t << endl
-                << std::setw(14) << "Priority: " << 2 << endl
+                << std::setw(14) << "Priority: " << sPriority << endl
                 << std::setw(14) << "Type: " << vec[i].second.type << endl
                 << std::setw(14) << "Remind time: " << r_t << endl;
       std::cout
@@ -397,9 +402,10 @@ void TaskList::Show_with_all_priority(int start, int end,
       std::cout
           << "----------------------------------------------------------------"
           << endl;
-      std::cout << std::setw(14) << "Name: " << vec[i].second.name << endl
+       std::cout << std::setw(14) << "ID:" << vec[i].first << endl
+                 <<std::setw(14) << "Name: " << vec[i].second.name << endl
                 << std::setw(14) << "Begin time: " << b_t << endl
-                << std::setw(14) << "Priority: " << 1 << endl
+                << std::setw(14) << "Priority: " << sPriority << endl
                 << std::setw(14) << "Type: " << vec[i].second.type << endl
                 << std::setw(14) << "Remind time: " << r_t << endl;
       std::cout
