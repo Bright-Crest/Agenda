@@ -109,7 +109,7 @@ bool AddTaskOp(TaskList& task_list, list<string> cmd)
 {
     Other task;
     task.priority = 0;
-    task.type = "-";
+    task.type = " ";
     string begin;                              // begin用于保存begin_time_并分配唯一的id
     list<string>::iterator it = ++cmd.begin(); // 从cmd的第二个string开始参考
 
@@ -161,10 +161,8 @@ bool AddTaskOp(TaskList& task_list, list<string> cmd)
                 break;
             string str = *(it);                                           // 找到-priority的下一位
             if (str == "-n" || str == "-b" || str == "-t" || str == "-r") //-priority后不跟参数,这是可以的
-            {
-                it++;
                 continue;
-            }
+            
             int p = stoi(str);
             if (p != 1 && p != 2 && p != 4)
             {
@@ -181,10 +179,7 @@ bool AddTaskOp(TaskList& task_list, list<string> cmd)
                 break;
             string str = *(it);                                           // 找到-type的下一位
             if (str == "-n" || str == "-b" || str == "-p" || str == "-r") //-type后不跟参数,这是可以的
-            {
-                it++;
                 continue;
-            }
 
             task.type = str;
             it++;
