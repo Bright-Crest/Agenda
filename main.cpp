@@ -5,17 +5,17 @@
 /* Standard C++ includes */
 #include <stdlib.h>
 
+#include <atomic>
 #include <chrono>
+#include <cstring>
 #include <experimental/filesystem>
 #include <filesystem>
 #include <iostream>
 #include <mutex>
 #include <sstream>
 #include <string>
-#include <cstring>
 #include <thread>
 #include <vector>
-#include <atomic>
 
 /*
   Include directly the different
@@ -62,7 +62,7 @@ void UserInterface(TaskList& task_list, const string en_filename,
         break;
       }
     }
-  is_done = true;
+    is_done = true;
 
   } catch (const exception& kException) {
     cout << "# ERR: std::Exception in " << __FILE__;
@@ -99,6 +99,8 @@ int main(int argc, const char* argv[]) {
           argv1 == "deleteaccount" || argv1 == "da") {
         for (int i = 1; i < argc && strcmp(argv[i], "-c") != 0; i++)
           account_cmd.push_back(argv[i]);
+      } else if (argv1 == "-h") {
+        Help();
       } else if (argv1 != "login" && argv1 != "li" && argv1 != "-u" &&
                  argv1 != "-p") {
         cout << "Please log in first.\n";
@@ -109,7 +111,7 @@ int main(int argc, const char* argv[]) {
           account_cmd.push_back(argv[i]);
         cmd_processor.GetArgv(argc, argv, ++i);
       }
-    }
+    } 
 
     // keep asking to log in or quit
     while (account_cmd.size() == 0 ||
@@ -128,6 +130,9 @@ int main(int argc, const char* argv[]) {
         cout << "Bye.\n";
         return 0;
       }
+      if (tmp == "help" || tmp == "h") {
+        Help();
+      }
       if (tmp == "login" || tmp == "li" || tmp == "createaccount" ||
           tmp == "ca" || tmp == "changepassword" || tmp == "changepw" ||
           tmp == "cp" || tmp == "deleteaccount" || tmp == "da") {
@@ -139,10 +144,10 @@ int main(int argc, const char* argv[]) {
     }
 
     // TODO : Linux file path and name pattern
-     //const string path = "~/Agenda/userfile/";
-     //const string tmp_path = "~/Agenda/tmp/";
+    // const string path = "~/Agenda/userfile/";
+    // const string tmp_path = "~/Agenda/tmp/";
     // Windows file path and name pattern
-    //const string home = getenv("")
+    // const string home = getenv("")
     const string path = "D:/Agenda/userfile/";
     const string tmp_path = "D:/Agenda/tmp/";
 
@@ -164,6 +169,8 @@ int main(int argc, const char* argv[]) {
     if (flag == 1 || flag == -1) {
       return 0;
     }
+
+    CopyRight();
 
     // After loging in, split into 2 threads
     thread user_thread(UserInterface, ref(task_list), en_filename, de_filename,
@@ -196,50 +203,65 @@ int main(int argc, const char* argv[]) {
 }
 
 void CopyRight() {
-
   stringstream ss;
 
   ss << "版权所有 (c) [2023] [徐菲悦]" << endl
-    << "                   [赵哲浩]" << endl
-    << "                   [朱施政]" << endl
-    << "                   [朱舟政]" << endl
-    << "" << endl
-    << "开发团队:" << endl
-    << "    - [徐菲悦]：完成类TaskList的Load()、SaveFile()函数实现" << endl
-    << "               完成Functions tools 里的函数的定义与声明" << endl
-    << "               完成Functions tools 里的函数的定义与声明" << endl
-    << "               完成图形界面的设计" << endl
-    << "" << endl
-    << "    - [赵哲浩]:完成了类TaskList的public Show()、private Show() 、get_priority_string()、show_with_one_priority()、show_with_two_priority()、show_with_all_priority()函数实现" << endl
-    << "              参与完成了类TaskList的Remind()、ShowTask()函数实现" << endl
-    << "              参与完成了CmdProcessor里的5个NoOp函数的实现" << endl
-    << "              参与完成了程序多线程运行的实现" << endl
-    << "" << endl
-    << "    - [朱施政]：完成类TaskList的Add()函数实现" << endl
-    << "               完成类CmdProcessor里5个Op函数的实现" << endl
-    << "               参与帮助文档和版权的编写" << endl
-    << "" << endl
-    << "    - [朱舟政]：完成类TaskList的主要构思（头文件）" << endl
-    << "               完成类CmdProcessor的所有构思及其所有成员函数实现，并确定了cmd_processor.h中的包裹函数的声明" << endl
-    << "               完成类AccountManager的所有实现，以及account_manager.h中的包裹函数的所有实现" << endl
-    << "               完成file_encrypt.h中所有函数实现，涉及文件加密解密" << endl
-    << "               完成main函数的设计" << endl
-    << "" << endl
-    << "" << endl
-    << "版本: [1.0.1]" << endl
-    << "最后更新时间: [2023/07/09]" << endl
-    << "" << endl
-    << "本软件受版权法和国际版权条约的保护。未经授权，严禁复制、修改、分发、展示或进行其他侵犯著作权的行为" << endl
-    << "" << endl
-    << "除非获得[徐菲悦]" << endl
-    << "       [赵哲浩]" << endl
-    << "       [朱施政]" << endl
-    << "       [朱舟政]的书面许可，否则不得在本软件的副本中进行复制、修改、分发或其他操作。" << endl
-    << "" << endl
-    << "如有任何疑问或意见，请联系开发团队" << endl
-    << "" << endl;
+     << "                   [赵哲浩]" << endl
+     << "                   [朱施政]" << endl
+     << "                   [朱舟政]" << endl
+     << "" << endl
+     << "开发团队:" << endl
+     << "    - [徐菲悦]：完成类TaskList的Load()、SaveFile()函数实现" << endl
+     << "               完成Functions tools 里的函数的定义与声明" << endl
+     << "               完成Functions tools 里的函数的定义与声明" << endl
+     << "               完成图形界面的设计" << endl
+     << "" << endl
+     << "    - [赵哲浩]:完成了类TaskList的public Show()、private Show() "
+        "、get_priority_string()、show_with_one_priority()、show_with_two_"
+        "priority()、show_with_all_priority()函数实现"
+     << endl
+     << "              参与完成了类TaskList的Remind()、ShowTask()函数实现"
+     << endl
+     << "              参与完成了CmdProcessor里的5个NoOp函数的实现" << endl
+     << "              参与完成了程序多线程运行的实现" << endl
+     << "" << endl
+     << "    - [朱施政]：完成类TaskList的Add()函数实现" << endl
+     << "               完成类CmdProcessor里5个Op函数的实现" << endl
+     << "               参与帮助文档和版权的编写" << endl
+     << "" << endl
+     << "    - [朱舟政]：完成类TaskList的主要构思（头文件）" << endl
+     << "               "
+        "完成类CmdProcessor的所有构思及其所有成员函数实现，并确定了cmd_"
+        "processor.h中的包裹函数的声明"
+     << endl
+     << "               "
+        "完成类AccountManager的所有实现，以及account_manager."
+        "h中的包裹函数的所有实现"
+     << endl
+     << "               完成file_encrypt.h中所有函数实现，涉及文件加密解密"
+     << endl
+     << "               完成main函数的设计" << endl
+     << "" << endl
+     << "" << endl
+     << "版本: [1.0.1]" << endl
+     << "最后更新时间: [2023/07/09]" << endl
+     << "" << endl
+     << "本软件受版权法和国际版权条约的保护。未经授权，严禁复制、修改、分发、展"
+        "示或进行其他侵犯著作权的行为"
+     << endl
+     << "" << endl
+     << "除非获得[徐菲悦]" << endl
+     << "       [赵哲浩]" << endl
+     << "       [朱施政]" << endl
+     << "       "
+        "[朱舟政]"
+        "的书面许可，否则不得在本软件的副本中进行复制、修改、分发或其他操作。"
+     << endl
+     << "" << endl
+     << "如有任何疑问或意见，请联系开发团队" << endl
+     << "" << endl;
 
-     cout << ss.str();
+  cout << ss.str();
 }
 
 void Help() {
@@ -247,13 +269,16 @@ void Help() {
   cout << " / /\tIndicates that this option can be omitted\n"
           " [ ]\tIndicates that this parameter can be omitted\n"
           " { }\tIndicates that this should be treated as an entity\n"
-          "  / \tIndicates that this is a choice.\n";  
+          "  / \tIndicates that this is a choice.\n";
   cout << "Commands about accounts:\n";
   cout << "login:\t{login / li} -u USER -p [PASSWORD]\n";
   cout << "changepassword:\t{changepassword / changepw / cp} -u USER -p "
-          "[PASSWORD]\nTips:\tYou can only enter your new password in the secure way. There's also a confirmation of your new password\n";
+          "[PASSWORD]\nTips:\tYou can only enter your new password in the "
+          "secure way. There's also a confirmation of your new password\n";
   cout << "createaccount:\t{createaccount / ca} -u USER -p [PASSWORD]\n";
-  cout << "deleteaccount:\t{deleteaccount / da} -u USER -p [PASSWORD]\nTips:\tthis command will also delete your file and you cannot restore it.\n";
+  cout << "deleteaccount:\t{deleteaccount / da} -u USER -p "
+          "[PASSWORD]\nTips:\tthis command will also delete your file and you "
+          "cannot restore it.\n";
   cout
       << "Note:\tyou cannot refind your password if you happen to forget it.\n";
   cout << "Options:\n";
@@ -262,7 +287,8 @@ void Help() {
           "password securely. Recommend not to enter password explicitly in "
           "command line since it's insecure.\n";
   cout << "<<Mode 1>>  Complete everything just in Shell Command Line.\n";
-  cout << "Syntax:\t{path/to/executable} [login / li] -u USER -p [PASSWORD] /-c/ [COMMAND]\n";
+  cout << "Syntax:\t{path/to/executable} [login / li] -u USER -p [PASSWORD] "
+          "/-c/ [COMMAND]\n";
   cout
       << "Options:\t-c\tindicates COMMAND. The COMMAND here can be any "
          "commands to interact with your tasks which will be described below\n";
@@ -270,15 +296,17 @@ void Help() {
   cout << "All commands are case insensitive.\n";
   cout << "Copyright:\tthis help document is written by Zhu Shi Zheng and Zhu "
           "Zhou Zheng.\n";
-  
-  cout<<endl;
-  
+
+  cout << endl;
+
   stringstream ss;
 
   ss << "Display help information for commands." << endl
      << "" << endl
      << "<<Mode 1>>" << endl
-     << "           Write all instructions for an operation of a task on one line for the program to " << endl
+     << "           Write all instructions for an operation of a task on one "
+        "line for the program to "
+     << endl
      << "automatically read and determine" << endl
      << "" << endl
      << "/ /  Indicates that this option can be omitted" << endl
@@ -286,56 +314,88 @@ void Help() {
      << "" << endl
      << "(1)Function and Usage Description of Function <addtask>:" << endl
      << "" << endl
-     << "command format:addtask -n   NAME   -b   BEGIN_TIME   /-p/   [PRIORITY]  /-t/  [TYPE]  -r  REMIND_TIME" << endl
+     << "command format:addtask -n   NAME   -b   BEGIN_TIME   /-p/   "
+        "[PRIORITY]  /-t/  [TYPE]  -r  REMIND_TIME"
+     << endl
      << "" << endl
      << "" << endl
      << "available options:" << endl
      << "                  -n     Name of the new task" << endl
      << "                  -b     begin_time of new task" << endl
-     << "                  /-p/   priority of new task          [PRIORITY]   default to 0" << endl
-     << "                  /-t/   type of new task              [TYPE]       default to "<< endl
+     << "                  /-p/   priority of new task          [PRIORITY]   "
+        "default to 0"
+     << endl
+     << "                  /-t/   type of new task              [TYPE]       "
+        "default to "
+     << endl
      << "                  -r     remind_time of new task" << endl
      << "" << endl
      << "Example Usage:" << endl
      << "" << endl
-     << "                   addtask -n	Tom  -b  1990/01/01/10:10:10  -p 2 -t sport -r  1995/11/10/10:25:15" << endl
+     << "                   addtask -n	Tom  -b  1990/01/01/10:10:10  -p 2 -t "
+        "sport -r  1995/11/10/10:25:15"
+     << endl
      << "" << endl
      << "Tips:" << endl
      << "" << endl
-     << "                   1.The time needs to comply with the specifications of the time format like xxxx/xx/xx/xx:xx:xx and have practical meanings." << endl
+     << "                   1.The time needs to comply with the specifications "
+        "of the time format like xxxx/xx/xx/xx:xx:xx and have practical "
+        "meanings."
+     << endl
      << "" << endl
-     << "                   2.User input parameters cannot start with -." << endl
+     << "                   2.User input parameters cannot start with -."
+     << endl
      << "" << endl
      << "" << endl
      << "" << endl
      << "(2)Function and Usage Description of Function <modifytask>:" << endl
      << "" << endl
-     << "command format:modifytask /-N/  NAME  /-I/  ID  /-n/  [NEW_NAME]  /-b/   [BEGIN_TIME]  /-p/   [PRIORITY]  /-" << endl
+     << "command format:modifytask /-N/  NAME  /-I/  ID  /-n/  [NEW_NAME]  "
+        "/-b/   [BEGIN_TIME]  /-p/   [PRIORITY]  /-"
+     << endl
      << "t/   [TYPE]  /-r/  [REMIND_TIME]" << endl
      << "" << endl
      << "available options:" << endl
-     << "                  /-N/     Task name that needs to modify information" << endl
-     << "                  /-I/     Task id that needs to modify information" << endl
-     << "                  /-n/     Name of the new task              [NEW_NAME]  default to the name of the task that " << endl
+     << "                  /-N/     Task name that needs to modify information"
+     << endl
+     << "                  /-I/     Task id that needs to modify information"
+     << endl
+     << "                  /-n/     Name of the new task              "
+        "[NEW_NAME]  default to the name of the task that "
+     << endl
      << "needs to be modified" << endl
-     << "                  /-b/     begin_time of the new task        [BEGIN_TIME]    default to the begin_time of the " << endl
+     << "                  /-b/     begin_time of the new task        "
+        "[BEGIN_TIME]    default to the begin_time of the "
+     << endl
      << "task that needs to be modified" << endl
-     << "                  /-p/     priority of new task              [PRIORITY]     default to the priority of the " << endl
+     << "                  /-p/     priority of new task              "
+        "[PRIORITY]     default to the priority of the "
+     << endl
      << "task that needs to be modified" << endl
-     << "                  /-t/     type of new task                  [TYPE]     default to the type of the task that " << endl
+     << "                  /-t/     type of new task                  [TYPE]   "
+        "  default to the type of the task that "
+     << endl
      << "needs to be modified" << endl
-     << "                  /-r/     remind_time of new task           [REMIND_TIME]     default to the remind_time of " << endl
+     << "                  /-r/     remind_time of new task           "
+        "[REMIND_TIME]     default to the remind_time of "
+     << endl
      << "the task that needs to be modified" << endl
      << "Example Usage:" << endl
      << "" << endl
-     << "                   modifytask -N  Tom  -b  1990/01/01/10:10:10   -t sport" << endl
-     << "                   modifytask -N  Tom  -I  123    -r  1990/01/01/10:10:10   -p  1" << endl
+     << "                   modifytask -N  Tom  -b  1990/01/01/10:10:10   -t "
+        "sport"
+     << endl
+     << "                   modifytask -N  Tom  -I  123    -r  "
+        "1990/01/01/10:10:10   -p  1"
+     << endl
      << "" << endl
      << "Tips:" << endl
      << "" << endl
      << "                  1.-I and - N must have at least one." << endl
-     << "                  2.If no task needs to be modified is found, an error will be automatically reported." << endl
+     << "                  2.If no task needs to be modified is found, an "
+        "error will be automatically reported."
+     << endl
      << "" << endl;
 
-     cout << ss.str();
+  cout << ss.str();
 }
