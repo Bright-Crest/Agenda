@@ -15,6 +15,10 @@ using namespace std;
 
 extern mutex mtx;
 
+bool should_quit(string choice){
+  return (choice == "q" || choice == "quit");
+}
+
 bool CmdProcessor::GetArgv(int argc, const char* argv[], int start) {
     cmd_.clear();
     if (start >= argc) {
@@ -767,47 +771,59 @@ bool AddTaskNoOp(TaskList& task_list) {
     std::getline(std::cin, newtask_name);
     std::istringstream newtaskname(newtask_name);
     newtaskname >> newtask.name;
+    if(should_quit(newtask.name)){
+      cout << "addtask quit!" << endl;
+      return false;
+    } 
 
     // 添加任务的开始时间
-    std::cout << "Please input the begin time of the task" << endl;
+    std::cout << "Please input the begin time of the task\nEnter q or quit to quit!" << endl;
     std::cout << "Time format should be 2022/02/02/03:00:00" << endl;
     string begin_t;
     bool valid_input = false;
     while (!valid_input)//检查任务的开始时间是不是%Y/%M/%D/%h:%m:%s的形式
     {
         std::cin >> begin_t;
+        if(should_quit(begin_t)){
+          cout << "addtask quit!" << endl;
+          return false;
+        } 
         if (isValidDate(begin_t))//如果是退出循环
             valid_input = true;
         else
-            std::cout << "Invalid format. Please try again." << endl;//否则一直输入直到是为止
+            std::cout << "Invalid format. Please try again.\nEnter q or quit to quit!" << endl;//否则一直输入直到是为止
     }
     newtask.begin_time = to_time_t(begin_t);//将用户输入的形式转化成time_t格式保存
     // 添加任务的优先级
     std::cout << "Please input the priority of the task" << endl;
-    std::cout << "1-low, 2-medium, 4-high, default value or other value-low" << endl;
+    std::cout << "-1-quit addtask, 1-low, 2-medium, 4-high, default value or other value-low" << endl;
     std::cin >> newtask.priority;
-    // 检查优先级是不是符合数字
-    while (!std::cin) {
-        std::cin.clear(); // 清除输入流状态标志
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+    // 检查优先级是不是符合1，2，4
+    while(!std::cin){
+      std::cin.clear(); // 清除输入流状态标志
+      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
 
-        std::cout << "Invalid input. Please enter a valid priority: " << endl;
-        std::cin >> newtask.priority;
+      std::cout << "Invalid input. Please enter a valid priority: \nEnter -1 to quit!" << endl;
+      std::cin >> newtask.priority;
+      if(newtask.priority == -1){
+        cout << "addtask quit!" << endl;
+        return false;
+      }
     }
-    if (newtask.priority != 1 && newtask.priority != 2 && newtask.priority != 4)
-        newtask.priority = 1;
+    if(newtask.priority != 1 && newtask.priority != 2 && newtask.priority != 4)
+      newtask.priority = 1;
     // 添加任务的种类
     std::cout << "Please input the type of the task, such as: entertainment  sport  study  routine" << endl;
-    std::cout << "If you want a default type, please enter -." << endl;
-    string newtask_type;
-    std::cin >> std::ws;  // Skips leading whitespace characters
-    std::getline(std::cin, newtask_type);
-    istringstream  newtasktype(newtask_type);
-    newtasktype >> newtask.type;
-    if (newtask.type[0] == '-')
-        newtask.type = "default";
+    std::cout << "If you want a default type, please enter -.\nEnter q or quit to quit!" << endl;
+    std::cin >> newtask.type;
+    if(should_quit(newtask.type)){
+      cout << "addtask quit!" << endl;
+      return false;
+    } 
+    else if(newtask.type[0] == '-')
+      newtask.type = "default";
     // 添加任务的提醒时间
-    std::cout << "Please input the remind time of the task" << endl;
+    std::cout << "Please input the remind time of the task\nEnter q or quit to quit!" << endl;
     std::cout << "Time format should be 2022/02/02/03:00:00" << endl;
     string remind_t;
     valid_input = false;
@@ -815,33 +831,41 @@ bool AddTaskNoOp(TaskList& task_list) {
     while (!valid_input)
     {
         std::cin >> remind_t;
+        if(should_quit(remind_t)){
+          cout << "addtask quit!" << endl;
+          return false;
+        } 
         if (isValidDate(remind_t))
             valid_input = true;
         else
-            std::cout << "Invalid format. Please try again." << endl;
+            std::cout << "Invalid format. Please try again.\nEnter q or quit to quit!" << endl;
     }
     newtask.remind_time = to_time_t(remind_t);//将用户输入的形式转化成time_t格式保存
     //id和开始时间一样
-    int id = to_time_t(begin_t) % 1000;
-    while (task_list.FindTask(id) != task_list.return_end()) {
+    int id = to_time_t(begin_t)%997;
+    while(task_list.FindTask(id) != task_list.return_end()){
         id++;
     }
     int res = task_list.Add(make_pair(id, newtask));
-    while (res != 0) {//如果用户输入的开始时间或名字重复了，返回值不是0
-        if (res == -1) {
-            std::cout << "The begin time repeats! Please enter another begin time: " << endl;
+    while ( res!= 0){//如果用户输入的开始时间或名字重复了，返回值不是0
+        if(res==-1){
+            std::cout << "The begin time repeats! Please enter another begin time: \nEnter q or quit to quit!" << endl;
             bool valid_input = false;
             while (!valid_input)//检查任务的开始时间是不是%Y/%M/%D/%h:%m:%s的形式
             {
                 std::cin >> begin_t;
+                if(should_quit(begin_t)){
+                  cout << "addtask quit!" << endl;
+                  return false;
+                } 
                 if (isValidDate(begin_t))//如果是退出循环
                     valid_input = true;
                 else
-                    std::cout << "Invalid format. Please try again." << endl;//否则一直输入直到是为止
+                    std::cout << "Invalid format. Please try again.\nEnter q or quit to quit!" << endl;//否则一直输入直到是为止
             }
             newtask.begin_time = to_time_t(begin_t);//将用户输入的形式转化成time_t格式保存
-            id = to_time_t(begin_t) % 997;
-            while (task_list.FindTask(id) == task_list.return_end()) {
+            id = to_time_t(begin_t)%997;
+            while(task_list.FindTask(id) == task_list.return_end()){
                 id++;
             }
             res = task_list.Add(make_pair(id, newtask));
@@ -853,49 +877,74 @@ bool AddTaskNoOp(TaskList& task_list) {
             std::getline(std::cin, newtask_name2);
             istringstream  newtaskname2(newtask_name2);
             newtaskname2>> newtask.name;
+            if(should_quit(newtask.name)){
+              cout << "addtask quit!" << endl;
+              return false;
+            } 
             res = task_list.Add(make_pair(id, newtask));
         }
     }
     return true;
 }
 
-bool DeleteTaskNoOp(TaskList& task_list) {
-    std::cout << "Delete tasks based on name or ID" << endl;
-    std::cout << "1 represents deletion based on ID\nwhile the remaining represents deletion based on name" << endl;
+bool DeleteTaskNoOp(TaskList& task_list){
+  std::cout << "Delete tasks based on name or ID" << endl;
+  std::cout << "-1 represents quit\n1 represents deletion based on ID\nwhile the remaining represents deletion based on name" << endl;
 
-    int choice;
+  int choice;
+  std::cin >> choice;
+  if(choice == -1){
+    cout << "deletetask quit!" << endl;
+    return false;
+  }
+  while (!std::cin) // 检查输入是否有效
+  {
+    std::cin.clear(); // 清除输入流状态标志
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+    std::cout << "Invalid input. Please enter a valid choice: \nEnter -1 to quit!" << endl;
     std::cin >> choice;
-    while (!std::cin) // 检查输入是否有效
-    {
+    if(choice == -1){
+      cout << "deletetask quit!" << endl;
+      return false;
+    }
+  }
+  if (choice == 1)
+  {
+    std::cout << "Please input the ID of the task to be deleted" << endl
+              << "Enter -1 to quit!" << endl;
+    long long id;
+    std::cin >> id;
+    if(id == -1){
+      cout << "deletetask quit!" << endl;
+      return false;
+    }
+    while (!std::cin || !task_list.Erase(id)) // 检查输入是否有效以及id是否存在
+    {	//在输入有效的情况下才会执行Erase并判断返回值
+      if(!std::cin){
         std::cin.clear(); // 清除输入流状态标志
         std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
 
-        std::cout << "Invalid input. Please enter a valid ID: " << endl;
-        std::cin >> choice;
-    }
-    if (choice == 1)
-    {
-        std::cout << "Please input the ID of the task to be deleted" << endl;
-        long long id;
+        std::cout << "Invalid input. Please enter a valid ID: \nEnter -1 to quit!" << endl;
         std::cin >> id;
-        while (!std::cin || !task_list.Erase(id)) // 检查输入是否有效以及id是否存在
-        {	//在输入有效的情况下才会执行Erase并判断返回值
-            if (!std::cin) {
-                std::cin.clear(); // 清除输入流状态标志
-                std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-                std::cout << "Invalid input. Please enter a valid ID: " << endl;
-                std::cin >> id;
-            }
-            else if (!task_list.Erase(id)) {
-                std::cin.clear(); // 清除输入流状态标志
-                std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-                std::cout << "Can not find this id. Please enter a valid ID: " << endl;
-                std::cin >> id;
-            }
+        if(id == -1){
+          cout << "deletetask quit!" << endl;
+          return false;
         }
+      }
+      else if(!task_list.Erase(id)){
+        std::cin.clear(); // 清除输入流状态标志
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+        std::cout << "Can not find this id. Please enter a valid ID: \nEnter -1 to quit!" << endl;
+        std::cin >> id;
+        if(id == -1){
+          cout << "deletetask quit!" << endl;
+          return false;
+        }
+      }
     }
+  }
     else
     {
         std::cout << "Please input the name of the task to be deleted" << endl; // 根据名称删除任务
@@ -905,6 +954,10 @@ bool DeleteTaskNoOp(TaskList& task_list) {
         std::getline(std::cin, newtask_name);
         istringstream  newtaskname(newtask_name);
         newtaskname >> taskName;
+        if(should_quit(taskName)){
+          cout << "deletetask quit!" << endl;
+          return false;
+        } 
         while (!task_list.Erase(taskName))
         {
             std::cin.clear(); // 清除输入流状态标志
@@ -917,6 +970,10 @@ bool DeleteTaskNoOp(TaskList& task_list) {
             std::getline(std::cin, newtask_name1);
             istringstream  newtaskname1(newtask_name1);
             newtaskname1 >> taskName;
+            if(should_quit(taskName)){
+                cout << "deletetask quit!" << endl;
+                return false;
+            } 
         }
 
     }
@@ -924,170 +981,249 @@ bool DeleteTaskNoOp(TaskList& task_list) {
     return true;
 }
 
-bool ShowTaskNoOp(TaskList& task_list) {
-    std::cout << "If you want to see all the tasks, input 0" << endl;
-    std::cout << "If you need to select according to the importance of the task, input 1" << endl;
-    std::cout << "If you need to select according to the time of the task, input 2" << endl;
-    std::cout << "If you need to select according to both the time and importance of the task, input 3" << endl;
-    std::cout << "default: show all" << endl;
 
-    int option;
+bool ShowTaskNoOp( TaskList& task_list){
+  std::cout << "If you want to quit, input -1!" << endl;
+  std::cout << "If you want to see all the tasks, input 0" << endl;
+  std::cout << "If you need to select according to the importance of the task, input 1" << endl;
+  std::cout << "If you need to select according to the time of the task, input 2" << endl;
+  std::cout << "If you need to select according to both the time and importance of the task, input 3" << endl;
+  std::cout << "default: show all" << endl;
+
+  int option;
+  std::cin >> option;
+  if(option == -1){
+    cout << "showtask quit!" << endl;
+    return false;
+  }
+  while (!std::cin) // 检查输入是否有效
+  {
+    std::cin.clear(); // 清除输入流状态标志
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+    std::cout << "Invalid input. Please enter a valid choice: " << endl;
     std::cin >> option;
-    while (!std::cin) // 检查输入是否有效
-    {
-        std::cin.clear(); // 清除输入流状态标志
-        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-        std::cout << "Invalid input. Please enter a valid choice: " << endl;
-        std::cin >> option;
+    if(option == -1){
+      cout << "showtask quit!" << endl;
+      return false;
     }
-    int priority = 7;
-    int startTime = 0;
-    string startTimeStr = "";
-    string endTimeStr = "";
-    string c;//由用户决定是否要设定时间
-    int endTime = pow(2, 31) - 1;
+  }
+  int priority = 7;
+  int startTime = 0;
+  string startTimeStr = "";
+  string endTimeStr = "";
+  string c;//由用户决定是否要设定时间
+  int endTime = pow(2, 31) - 1;
 
-    switch (option)
-    {
-    case 0:
-        task_list.Show(); // 显示所有任务
-        break;
-    case 1:
-        std::cout << "1 for low, 2 for medium, 4 for high" << endl;
-        std::cout << "3 for low and medium, 6 for medium and high, 5 for low and high" << endl;
-        std::cout << "7 for all" << endl;
-        std::cin >> priority;
-        while (priority > 7 || priority < 1)
-        {
-            std::cout << "invalid" << endl;
-            std::cin >> priority;
-        }
-        while (!std::cin) // 检查输入是否有效
-        {
-            std::cin.clear(); // 清除输入流状态标志
-            std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-            std::cout << "Invalid input. Please enter a valid choice: " << endl;
-            std::cin >> priority;
-        }
-        task_list.Show(0, pow(2, 31) - 1, priority); // 根据优先级显示任务
-        break;
-    case 2:
-        std::cout << "If you want to see all the tasks before the specified date, enter y/n" << endl;
-        std::cout << "format: 2022/02/02/10:00:00" << endl;
-        std::cin >> c;
-
-        if (c == "y" || c == "Y") {
-            std::cout << "Please input the date" << endl;
-            std::cin >> startTimeStr;
-
-            while (!isValidDate(startTimeStr))
-            {
-                std::cout << "Invalid input, please try again" << endl;
-                std::cin >> startTimeStr;
-            }
-
-        }
-
-        if (startTimeStr != "")
-            startTime = to_time_t(startTimeStr);
-
-        std::cout << "If you want to see all the tasks after the specified date, enter y/n" << endl;
-        std::cout << "format: 2022/02/02/10:00:00" << endl;
-        std::cin >> c;
-
-        if (c == "y" || c == "Y")
-        {
-            std::cout << "Please input the date" << endl;
-            std::cin >> endTimeStr;
-
-            while (!isValidDate(endTimeStr))
-            {
-                std::cout << "Invalid input, please try again" << endl;
-                std::cin >> endTimeStr;
-            }
-
-        }
-
-        if (endTimeStr != "")
-            endTime = to_time_t(endTimeStr);
-
-        task_list.Show(startTime, endTime); // 根据时间范围显示任务
-        break;
-    case 3:
-        std::cout << "1 for low, 2 for medium, 4 for high" << endl;
-        std::cout << "3 for low and medium, 6 for medium and high, 5 for low and high" << endl;
-        std::cout << "7 for all" << endl;
-        std::cin >> priority;
-        while (priority > 7 || priority < 1)
-        {
-            std::cout << "invalid" << endl;
-            std::cin >> priority;
-        }
-        while (!std::cin) // 检查输入是否有效
-        {
-            std::cin.clear(); // 清除输入流状态标志
-            std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-            std::cout << "Invalid input. Please enter a valid choice: " << endl;
-            std::cin >> priority;
-        }
-        std::cout << "If you want to see all the tasks before the specified date, enter y/n" << endl;
-        std::cout << "format: 2022/02/02/10:00:00" << endl;
-        std::cin >> c;
-
-        if (c == "y" || c == "Y") {
-            std::cout << "Please input the date" << endl;
-            std::cin >> startTimeStr;
-
-            while (!isValidDate(startTimeStr))
-            {
-                std::cout << "Invalid input, please try again" << endl;
-                std::cin >> startTimeStr;
-            }
-
-        }
-
-        if (startTimeStr != "")
-            startTime = to_time_t(startTimeStr);
-
-        std::cout << "If you want to see all the tasks after the specified date, enter y/n" << endl;
-        std::cout << "format: 2022/02/02/10:00:00" << endl;
-        std::cin >> c;
-
-        if (c == "y" || c == "Y") {
-            std::cout << "Please input the date" << endl;
-            std::cin >> endTimeStr;
-
-            while (!isValidDate(endTimeStr))
-            {
-                std::cout << "Invalid input, please try again" << endl;
-                std::cin >> endTimeStr;
-            }
-
-        }
-
-        if (endTimeStr != "")
-            endTime = to_time_t(endTimeStr);
-
-        task_list.Show(startTime, endTime, priority); // 根据时间范围和优先级
+  switch (option)
+  {
+  case 0:
+    task_list.Show(); // 显示所有任务
+    break;
+  case 1:
+    std::cout << "1 for low, 2 for medium, 4 for high" << endl;
+    std::cout << "3 for low and medium, 6 for medium and high, 5 for low and high" << endl;
+    std::cout << "7 for all" << endl << "-1 for quit" << endl;
+    std::cin >> priority;
+    if(priority == -1){
+      cout << "showtask quit!" << endl;
+      return false;
     }
-    return true;
+    while (priority > 7 || priority < 1 || !std::cin) // 检查输入是否有效
+    {
+      std::cin.clear(); // 清除输入流状态标志
+      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+      std::cout << "Invalid input. Please enter a valid choice: " << endl;
+      std::cin >> priority;
+      if(priority == -1){
+        cout << "showtask quit!" << endl;
+        return false;
+      }
+    }
+    task_list.Show(0, pow(2, 31) - 1, priority); // 根据优先级显示任务
+    break;
+  case 2:
+    std::cout << "If you want to see all the tasks before the specified date, enter y/n" << endl;
+    std::cout << "format: 2022/02/02/10:00:00" << endl;
+    std::cout << "Enter q or quit to quit!" << endl;
+    std::cin >> c;
+    if(should_quit(c)){
+      cout << "showtask quit!" << endl;
+      return false;
+    }
+
+    if (c == "y" || c == "Y") {
+      std::cout << "Please input the date\nEnter q or quit to quit!" << endl;
+      std::cin >> startTimeStr;
+      if(should_quit(startTimeStr)){
+        cout << "showtask quit!" << endl;
+        return false;
+      }
+
+      while (!isValidDate(startTimeStr))
+      {
+        std::cout << "Invalid input, please try again\nEnter q or quit to quit!" << endl;
+        std::cin >> startTimeStr;
+        if(should_quit(startTimeStr)){
+          cout << "showtask quit!" << endl;
+          return false;
+        }
+      }
+
+    }
+
+    if (startTimeStr != "")
+      startTime = to_time_t(startTimeStr);
+
+    std::cout << "If you want to see all the tasks after the specified date, enter y/n" << endl;
+    std::cout << "format: 2022/02/02/10:00:00" << endl;
+    std::cout << "Enter q or quit to quit!" << endl;
+    std::cin >> c;
+    if(should_quit(c)){
+      cout << "showtask quit!" << endl;
+      return false;
+    }
+
+    if (c == "y" || c == "Y")
+    {
+      std::cout << "Please input the date\nEnter q or quit to quit!" << endl;
+      std::cin >> endTimeStr;
+      if(should_quit(endTimeStr)){
+        cout << "showtask quit!" << endl;
+        return false;
+      }
+
+
+      while (!isValidDate(endTimeStr))
+      {
+        std::cout << "Invalid input, please try again\nEnter q or quit to quit!" << endl;
+        std::cin >> endTimeStr;
+        if(should_quit(endTimeStr)){
+          cout << "showtask quit!" << endl;
+          return false;
+        }
+      }
+
+    }
+
+    if (endTimeStr != "")
+      endTime = to_time_t(endTimeStr);
+
+    task_list.Show(startTime, endTime); // 根据时间范围显示任务
+    break;
+  case 3:
+    std::cout << "1 for low, 2 for medium, 4 for high" << endl;
+    std::cout << "3 for low and medium, 6 for medium and high, 5 for low and high" << endl;
+    std::cout << "7 for all" << endl << "-1 for quit" << endl;
+    std::cin >> priority;
+    if(priority == -1){
+      cout << "showtask quit!" << endl;
+      return false;
+    }
+    while (priority > 7 || priority < 1 || !std::cin) // 检查输入是否有效
+    {
+      std::cin.clear(); // 清除输入流状态标志
+      std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+      std::cout << "Invalid input. Please enter a valid choice: " << endl;
+      std::cin >> priority;
+      if(priority == -1){
+        cout << "showtask quit!" << endl;
+        return false;
+      }
+    }
+    std::cout << "If you want to see all the tasks before the specified date, enter y/n" << endl;
+    std::cout << "format: 2022/02/02/10:00:00" << endl;
+    std::cout << "Enter q or quit to quit!" << endl;
+    std::cin >> c;
+    if(should_quit(c)){
+      cout << "showtask quit!" << endl;
+      return false;
+    }
+
+    if (c == "y" || c == "Y") {
+      std::cout << "Please input the date\nEnter q or quit to quit!" << endl;
+      std::cin >> startTimeStr;
+      if(should_quit(startTimeStr)){
+        cout << "showtask quit!" << endl;
+        return false;
+      }
+
+      while (!isValidDate(startTimeStr))
+      {
+        std::cout << "Invalid input, please try again\nEnter q or quit to quit!" << endl;
+        std::cin >> startTimeStr;
+        if(should_quit(startTimeStr)){
+          cout << "showtask quit!" << endl;
+          return false;
+        }
+      }
+
+    }
+
+    if (startTimeStr != "")
+      startTime = to_time_t(startTimeStr);
+
+    std::cout << "If you want to see all the tasks after the specified date, enter y/n" << endl;
+    std::cout << "format: 2022/02/02/10:00:00" << endl;
+    std::cout << "Enter q or quit to quit!" << endl;
+    std::cin >> c;
+    if(should_quit(c)){
+      cout << "showtask quit!" << endl;
+      return false;
+    }
+
+    if (c == "y" || c == "Y")
+    {
+      std::cout << "Please input the date\nEnter q or quit to quit!" << endl;
+      std::cin >> endTimeStr;
+      if(should_quit(endTimeStr)){
+        cout << "showtask quit!" << endl;
+        return false;
+      }
+
+
+      while (!isValidDate(endTimeStr))
+      {
+        std::cout << "Invalid input, please try again\nEnter q or quit to quit!" << endl;
+        std::cin >> endTimeStr;
+        if(should_quit(endTimeStr)){
+          cout << "showtask quit!" << endl;
+          return false;
+        }
+      }
+
+    }
+
+    if (endTimeStr != "")
+      endTime = to_time_t(endTimeStr);
+
+    task_list.Show(startTime, endTime, priority); // 根据时间范围和优先级
+  }
+  return true;
 }
 
 bool ModifyTaskNoOp(TaskList& task_list) {
     std::cout << "search tasks based on name or ID" << endl;
-    std::cout << "1 represents search based on ID\nwhile the remaining represents search based on name" << endl;
+    std::cout << "-1 represents quit\n1 represents search based on ID\nwhile the remaining represents search based on name" << endl;
     int choice;
     std::cin >> choice;
+    if(choice == -1){
+    cout << "modifytask quit!" << endl;
+    return false;
+    }
     while (!std::cin) // 检查输入是否有效
     {
         std::cin.clear(); // 清除输入流状态标志
         std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-        std::cout << "Invalid input. Please enter a valid choice: " << endl;
+        
+        std::cout << "Invalid input. Please enter a valid choice: \nEnter -1 to quit!" << endl;
         std::cin >> choice;
+        if(choice == -1){
+        cout << "modifytask quit!" << endl;
+        return false;
+        }
     }
     vector<pair<int, Other>>::iterator it;
     string newstart;
@@ -1095,29 +1231,41 @@ bool ModifyTaskNoOp(TaskList& task_list) {
     switch (choice)
     {
     case 1:
-        std::cout << "please input the id of the wanted task" << endl;
-        long long id;
+    std::cout << "please input the id of the wanted task\nEnter -1 to quit!" << endl;
+    long long id;
+    std::cin >> id;
+    if(id == -1){
+      cout << "modifytask quit!" << endl;
+      return false;
+    }
+    while (!std::cin || !task_list.FindShow(id)) // 检查输入是否有效
+    {
+      if(!std::cin){
+        std::cin.clear(); // 清除输入流状态标志
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+        std::cout << "Invalid input. Please enter a valid id: \nEnter -1 to quit!" << endl;
         std::cin >> id;
-        while (!std::cin || !task_list.FindShow(id)) // 检查输入是否有效
-        {
-            if (!std::cin) {
-                std::cin.clear(); // 清除输入流状态标志
-                std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-                std::cout << "Invalid input. Please enter a valid id: " << endl;
-                std::cin >> id;
-            }
-            else if (!task_list.FindShow(id)) {
-                std::cin.clear(); // 清除输入流状态标志
-                std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-                std::cout << "Can not find this id. Please enter a valid id: " << endl;
-                std::cin >> id;
-            }
+        if(id == -1){
+          cout << "modifytask quit!" << endl;
+          return false;
         }
+      }
+      else if(!task_list.FindShow(id)){
+        std::cin.clear(); // 清除输入流状态标志
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
 
-        it = task_list.FindTask(id);
-        break;
+        std::cout << "Can not find this id. Please enter a valid id: \nEnter -1 to quit!" << endl;
+        std::cin >> id;
+        if(id == -1){
+          cout << "modifytask quit!" << endl;
+          return false;
+        }
+      }
+    }
+    
+    it = task_list.FindTask(id);
+    break;
     default:
         std::cout << "please input the name of the wanted task" << endl;
         string idx;
@@ -1126,6 +1274,10 @@ bool ModifyTaskNoOp(TaskList& task_list) {
         std::getline(std::cin, newtask_name);
         istringstream  newtaskname(newtask_name);
         newtaskname >> idx;
+        if(should_quit(idx)){
+          cout << "modifytask quit!" << endl;
+          return false;
+        }
         while (!task_list.FindShow(idx)) // 检查输入是否有效
         {
             if (!task_list.FindShow(idx)) {
@@ -1138,22 +1290,32 @@ bool ModifyTaskNoOp(TaskList& task_list) {
                 std::getline(std::cin, newtask_name1);
                 istringstream  newtaskname1(newtask_name1);
                 newtaskname1 >> idx;
+                if(should_quit(idx)){
+                  cout << "modifytask quit!" << endl;
+                  return false;
+                }
             }
         }
 
         it = task_list.FindTask(idx);
     }
     std::cout << "n : change name" << endl;
-    std::cout << "s : change start time" << endl;
-    std::cout << "r : change remind time" << endl;
-    std::cout << "t : change type " << endl;
-    std::cout << "p : change priority " << endl;
+  std::cout << "s : change start time" << endl;
+  std::cout << "r : change remind time" << endl;
+  std::cout << "t : change type " << endl;
+  std::cout << "p : change priority " << endl;
+  std::cout << "q : change priority " << endl;
 
-    string xx;
-    std::cin >> xx;
-    bool is_invalid = true;
-    while (is_invalid) {
-        if (xx == "n" || xx == "N") {
+  string xx;
+  std::cin >> xx;
+  
+  bool is_invalid=true;
+  while(is_invalid){
+    if(should_quit(xx)){
+      cout << "modifytask quit!" << endl;
+      return false;
+    }
+        else if (xx == "n" || xx == "N") {
             std::cout << "change name" << endl;
             string newtask_namen;
             std::cin >> std::ws;  // Skips leading whitespace characters
@@ -1213,43 +1375,63 @@ bool ModifyTaskNoOp(TaskList& task_list) {
     return true;
 }
 
-bool SearchTaskNoOp(TaskList& task_list) {
-    std::cout << "search tasks based on name or ID" << endl;
-    std::cout << "1 represents search based on ID\nwhile the remaining represents search based on name" << endl;
-    int choice;
+bool SearchTaskNoOp(TaskList& task_list){
+  std::cout << "search tasks based on name or ID" << endl;
+  std::cout << "-1 represents quit\n1 represents search based on ID\nwhile the remaining represents search based on name" << endl;
+  int choice;
+  std::cin >> choice;
+  if(choice == -1){
+    cout << "searchtask quit!" << endl;
+    return false;
+  }
+  while (!std::cin) // 检查输入是否有效
+  {
+    std::cin.clear(); // 清除输入流状态标志
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+    std::cout << "Invalid input. Please enter a valid choice: " << endl;
     std::cin >> choice;
-    while (!std::cin) // 检查输入是否有效
+    if(choice == -1){
+      cout << "searchtask quit!" << endl;
+      return false;
+    }
+  }
+  switch (choice)
+  {
+  case 1:
+    std::cout << "please input the id of the wanted task\nEnter -1 to quit!" << endl;
+    long long id;
+    std::cin >> id;
+    if(id == -1){
+      cout << "searchtask quit!" << endl;
+      return false;
+    }
+    while (!std::cin || !task_list.FindShow(id)) // 检查输入是否有效
     {
+      if(!std::cin){
         std::cin.clear(); // 清除输入流状态标志
         std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
 
-        std::cout << "Invalid input. Please enter a valid choice: " << endl;
-        std::cin >> choice;
-    }
-    switch (choice)
-    {
-    case 1:
-        std::cout << "please input the id of the wanted task" << endl;
-        long long id;
+        std::cout << "Invalid input. Please enter a valid id: " << endl;
         std::cin >> id;
-        while (!std::cin || !task_list.FindShow(id)) // 检查输入是否有效
-        {
-            if (!std::cin) {
-                std::cin.clear(); // 清除输入流状态标志
-                std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-                std::cout << "Invalid input. Please enter a valid id: " << endl;
-                std::cin >> id;
-            }
-            else if (!task_list.FindShow(id)) {
-                std::cin.clear(); // 清除输入流状态标志
-                std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
-
-                std::cout << "Can not find this id. Please enter a valid id: " << endl;
-                std::cin >> id;
-            }
+        if(id == -1){
+          cout << "searchtask quit!" << endl;
+          return false;
         }
-        break;
+      }
+      else if(!task_list.FindShow(id)){
+        std::cin.clear(); // 清除输入流状态标志
+        std::cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 忽略剩余的输入
+
+        std::cout << "Can not find this id. Please enter a valid id: " << endl;
+        std::cin >> id;
+        if(id == -1){
+          cout << "searchtask quit!" << endl;
+          return false;
+        }
+      }
+    }
+    break;
     default:
         std::cout << "please input the name of the wanted task" << endl;
         string ix;
@@ -1258,6 +1440,10 @@ bool SearchTaskNoOp(TaskList& task_list) {
         std::getline(std::cin, newtask_namenxx);
         istringstream  newtasknamenxx(newtask_namenxx);
         newtasknamenxx >> ix;
+        if(should_quit(ix)){
+          cout << "searchtask quit!" << endl;
+          return false;
+        }
         while (!task_list.FindShow(ix)) // 检查输入是否有效
         {
             std::cin.clear(); // 清除输入流状态标志
@@ -1269,6 +1455,10 @@ bool SearchTaskNoOp(TaskList& task_list) {
             std::getline(std::cin, newtask_namenxox);
             istringstream  newtasknamenxox(newtask_namenxox);
             newtasknamenxox >> ix;
+            if(should_quit(ix)){
+              cout << "searchtask quit!" << endl;
+              return false;
+            }
         }
         break;
     }
