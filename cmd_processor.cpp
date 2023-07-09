@@ -48,63 +48,62 @@ bool CmdProcessor::GetCmd() {
 // check cmd and do sth accordingly; return: 1 -- correct cmd, 0 -- wrong cmd,
 // -1 -- quit.
 int CmdProcessor::CmdDistributor(TaskList& task_list) const {
-    const int kSize = cmd_.size();
-    if (kSize < 1) return 0;
+  const int kSize = cmd_.size();
+  if (kSize < 1) return 0;
 
-    bool flag = false;
-    string first_cmd = cmd_.front();
-    to_lower(first_cmd);
+  bool flag = true;
+  string first_cmd = cmd_.front();
+  to_lower(first_cmd);
 
-    if (first_cmd == "addtask" || first_cmd == "add") {
-        lock_guard<mutex> lck(mtx);
-        if (kSize == 1)
-            flag = AddTaskNoOp(task_list);
-        else
-            flag = AddTaskOp(task_list, cmd_);
-    }
-    else if (first_cmd == "modifytask" || first_cmd == "modify") {
-        lock_guard<mutex> lck(mtx);
-        if (kSize == 1)
-            flag = ModifyTaskNoOp(task_list);
-        else
-            flag = ModifyTaskOp(task_list, cmd_);
-    }
-    else if (first_cmd == "deletetask" || first_cmd == "delete") {
-        lock_guard<mutex> lck(mtx);
-        if (kSize == 1)
-            flag = DeleteTaskNoOp(task_list);
-        else
-            flag = DeleteTaskOp(task_list, cmd_);
-    }
-    else if (first_cmd == "showtask" || first_cmd == "show") {
-        if (kSize == 1)
-            flag = ShowTaskNoOp(task_list);
-        else
-            flag = ShowTaskOp(task_list, cmd_);
-    }
-    else if (first_cmd == "searchtask" || first_cmd == "search") {
-        if (kSize == 1)
-            flag = SearchTaskNoOp(task_list);
-        else
-            flag = SearchTaskOp(task_list, cmd_);
-    }
-    else if (first_cmd == "quit" || first_cmd == "q") {
-        cout << "Bye.\n";
-        return -1;
-    }
-    else if (first_cmd == "login" || first_cmd == "li" ||
-        first_cmd == "createaccount" || first_cmd == "ca" ||
-        first_cmd == "changepassword" || first_cmd == "changepw" ||
-        first_cmd == "cp" || first_cmd == "deleteaccount" ||
-        first_cmd == "da") {
-        cout << "Please quit first and then restart the program to \"" << first_cmd
-            << "\".\n";
-    }
-    else {
-        cout << "\"" << cmd_.front() << "\" is not a valid command.\n";
-        return 0;
-    }
-    return (int)flag;
+  if (first_cmd == "addtask" || first_cmd == "add") {
+    lock_guard<mutex> lck(mtx);
+    if (kSize == 1)
+      flag = AddTaskNoOp(task_list);
+    else
+      return AddTaskOp(task_list, cmd_);
+  } else if (first_cmd == "modifytask" || first_cmd == "modify") {
+    lock_guard<mutex> lck(mtx);
+    if (kSize == 1)
+      flag = ModifyTaskNoOp(task_list);
+    else
+      return ModifyTaskOp(task_list, cmd_);
+  } else if (first_cmd == "deletetask" || first_cmd == "delete") {
+    lock_guard<mutex> lck(mtx);
+    if (kSize == 1)
+      flag = DeleteTaskNoOp(task_list);
+    else
+      return DeleteTaskOp(task_list, cmd_);
+  } else if (first_cmd == "showtask" || first_cmd == "show") {
+    if (kSize == 1)
+      flag = ShowTaskNoOp(task_list);
+    else
+      return ShowTaskOp(task_list, cmd_);
+  } else if (first_cmd == "searchtask" || first_cmd == "search") {
+    if (kSize == 1)
+      flag = SearchTaskNoOp(task_list);
+    else
+      return SearchTaskOp(task_list, cmd_);
+  } else if (first_cmd == "quit" || first_cmd == "q") {
+    cout << "Bye.\n";
+    return -1;
+  } else if (first_cmd == "login" || first_cmd == "li" ||
+             first_cmd == "createaccount" || first_cmd == "ca" ||
+             first_cmd == "changepassword" || first_cmd == "changepw" ||
+             first_cmd == "cp" || first_cmd == "deleteaccount" ||
+             first_cmd == "da") {
+    cout << "Please quit first and then restart the program to \"" << first_cmd
+         << "\".\n";
+  } else if (first_cmd == "help" || first_cmd == "h") {
+    Help();
+  } else {
+    cout << "\"" << cmd_.front() << "\" is not a valid command.\n";
+    return 0;
+  }
+  if (flag) {
+    return 1;
+  } else {
+    return -1;
+  }
 }
 
 // 用户输入格式:addtask -n name -b begin -p priority -t type -r remind (注意:用户输入的参数不能以-开头,priority默认为0,type默认为" ",选项的顺序可以打乱)
