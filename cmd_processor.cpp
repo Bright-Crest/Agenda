@@ -109,7 +109,7 @@ bool AddTaskOp(TaskList& task_list, list<string> cmd)
 {
     Other task;
     task.priority = 0;
-    task.type = " ";
+    task.type = "-";
     string begin;                              // begin用于保存begin_time_并分配唯一的id
     list<string>::iterator it = ++cmd.begin(); // 从cmd的第二个string开始参考
 
