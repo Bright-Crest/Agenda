@@ -29,6 +29,7 @@ bool ModifyTaskNoOp(TaskList& task_list);
 bool DeleteTaskNoOp(TaskList& task_list);
 bool ShowTaskNoOp(const TaskList& task_list);
 bool SearchTaskNoOp(const TaskList& task_list);
+bool should_quit(string choice);
 
 // All ops(options) start with "-" and have only one character.
 bool AddTaskOp(TaskList& task_list, list<string> cmd);  // ops: "n:b:r:pt"
