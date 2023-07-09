@@ -227,4 +227,72 @@ void Help() {
   cout << "All commands are case insensitive.\n";
   cout << "Copyright:\tthis help document is written by Zhu Shi Zheng and Zhu "
           "Zhou Zheng.\n";
+  
+  cout<<endl;
+  
+  stringstream ss;
+
+  ss << "Display help information for commands." << endl
+     << "" << endl
+     << "<<Mode 1>>" << endl
+     << "           Write all instructions for an operation of a task on one line for the program to " << endl
+     << "automatically read and determine" << endl
+     << "" << endl
+     << "/ /  Indicates that this option can be omitted" << endl
+     << "[ ]  Indicates that this parameter can be omitted" << endl
+     << "" << endl
+     << "(1)Function and Usage Description of Function <addtask>:" << endl
+     << "" << endl
+     << "command format:addtask -n   NAME   -b   BEGIN_TIME   /-p/   [PRIORITY]  /-t/  [TYPE]  -r  REMIND_TIME" << endl
+     << "" << endl
+     << "" << endl
+     << "available options:" << endl
+     << "                  -n     Name of the new task" << endl
+     << "                  -b     begin_time of new task" << endl
+     << "                  /-p/   priority of new task          [PRIORITY]   default to 0" << endl
+     << "                  /-t/   type of new task              [TYPE]       default to "<< endl
+     << "                  -r     remind_time of new task" << endl
+     << "" << endl
+     << "Example Usage:" << endl
+     << "" << endl
+     << "                   addtask -n	Tom  -b  1990/01/01/10:10:10  -p 2 -t sport -r  1995/11/10/10:25:15" << endl
+     << "" << endl
+     << "Tips:" << endl
+     << "" << endl
+     << "                   1.The time needs to comply with the specifications of the time format like xxxx/xx/xx/xx:xx:xx and have practical meanings." << endl
+     << "" << endl
+     << "                   2.User input parameters cannot start with -." << endl
+     << "" << endl
+     << "" << endl
+     << "" << endl
+     << "(2)Function and Usage Description of Function <modifytask>:" << endl
+     << "" << endl
+     << "command format:modifytask /-N/  NAME  /-I/  ID  /-n/  [NEW_NAME]  /-b/   [BEGIN_TIME]  /-p/   [PRIORITY]  /-" << endl
+     << "t/   [TYPE]  /-r/  [REMIND_TIME]" << endl
+     << "" << endl
+     << "available options:" << endl
+     << "                  /-N/     Task name that needs to modify information" << endl
+     << "                  /-I/     Task id that needs to modify information" << endl
+     << "                  /-n/     Name of the new task              [NEW_NAME]  default to the name of the task that " << endl
+     << "needs to be modified" << endl
+     << "                  /-b/     begin_time of the new task        [BEGIN_TIME]    default to the begin_time of the " << endl
+     << "task that needs to be modified" << endl
+     << "                  /-p/     priority of new task              [PRIORITY]     default to the priority of the " << endl
+     << "task that needs to be modified" << endl
+     << "                  /-t/     type of new task                  [TYPE]     default to the type of the task that " << endl
+     << "needs to be modified" << endl
+     << "                  /-r/     remind_time of new task           [REMIND_TIME]     default to the remind_time of " << endl
+     << "the task that needs to be modified" << endl
+     << "Example Usage:" << endl
+     << "" << endl
+     << "                   modifytask -N  Tom  -b  1990/01/01/10:10:10   -t sport" << endl
+     << "                   modifytask -N  Tom  -I  123    -r  1990/01/01/10:10:10   -p  1" << endl
+     << "" << endl
+     << "Tips:" << endl
+     << "" << endl
+     << "                  1.-I and - N must have at least one." << endl
+     << "                  2.If no task needs to be modified is found, an error will be automatically reported." << endl
+     << "" << endl;
+
+     cout << ss.str();
 }
