@@ -1,4 +1,4 @@
-﻿// main
+// main
 
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 
@@ -45,6 +45,9 @@ mutex mtx;
 const string kProgramName = "mytask";
 atomic<bool> is_done(false);
 
+void CopyRight();
+void Help();
+
 void UserInterface(TaskList& task_list, const string en_filename,
                    const string de_filename, const string password) {
   try {
@@ -59,14 +62,13 @@ void UserInterface(TaskList& task_list, const string en_filename,
         break;
       }
     }
+  is_done = true;
 
   } catch (const exception& kException) {
     cout << "# ERR: std::Exception in " << __FILE__;
     cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
     cout << "# ERR: " << kException.what() << endl;
   }
-
-  is_done = true;
 }
 
 int main(int argc, const char* argv[]) {
@@ -137,8 +139,8 @@ int main(int argc, const char* argv[]) {
     }
 
     // TODO : Linux file path and name pattern
-    // const string path = "~/Agenda/userfile/";
-    // const string tmp_path = "~/Agenda/tmp/";
+     //const string path = "~/Agenda/userfile/";
+     //const string tmp_path = "~/Agenda/tmp/";
     // Windows file path and name pattern
     //const string home = getenv("")
     const string path = "D:/Agenda/userfile/";
@@ -193,93 +195,36 @@ int main(int argc, const char* argv[]) {
   return 0;
 }
 
-// int main(int argc, char* argv[]) {
-//   // TaskList tl("D:/stephenzhu/Desktop/data.txt");
-//   // tl.FindShow("eat");
-//   // tl.FindShow(1);
-//   // tl.Show(0, 100);
-//   //  tl.Erase("eat");
-//   // tl.Erase(1);
-//   //  tl.Show(0, 100, 2);
-//   //  tl.Remind();
-//
-//   try {
-//     const string kProgramName = "mytask";
-//
-//     // AccountManager initialize parameters
-//     string hostname = "tcp://127.0.0.1:3306";
-//     string username = "root";
-//     string password = "Agenda2022";
-//     string db = "test1";
-//     string table = "AgendaLogin";
-//     string user_column = "Username";
-//     string encrypt_pw_column = "Password";
-//     AccountManager am(hostname, username, password, db, table, user_column,
-//                       encrypt_pw_column);
-//
-//     vector<string> login_cmd;
-//     string user;
-//     string pw;
-//     CmdProcessor cpr;
-//
-//     // deal with command line
-//     if (argc > 1) {
-//       string argv1 = argv[1];
-//       to_lower(argv1);
-//       if (argv1 != "login" && argv1 != "-u" && argv1 != "-p") {
-//         cout << "Please log in first.\n";
-//       } else {
-//         int i;
-//         for (i = 1; i < argc && argv[i] != "-c";
-//              i++)  // TODO : c -- command. Plus, '-' is not allowed in
-//              password
-//           login_cmd.push_back(argv[i]);
-//         cpr.GetArgv(argc, argv, ++i);
-//       }
-//     }
-//     // keep asking to log in or quit
-//     while (login_cmd.size() == 0) {
-//       cout << "(" << kProgramName << ") ";
-//       string tmp;
-//       getline(cin, tmp);
-//       istringstream cmd_stream(tmp);
-//
-//       cmd_stream >> tmp;
-//       to_lower(tmp);
-//       if (tmp == "quit" || tmp == "q") {
-//         cout << "Bye.\n";
-//         return 0;
-//       }
-//
-//       if (tmp != "login" && tmp != "-u" && tmp != "-p") {
-//         cout << "Please log in first.\n";
-//       } else {
-//         login_cmd.push_back(tmp);
-//         while (cmd_stream >> tmp) login_cmd.push_back(tmp);
-//       }
-//     }
-//     if (!UserLogin(am, login_cmd, user, pw)) {
-//       return 0;
-//     } else {
-//       string filename = "D:/stephenzhu/Desktop/" + user + "_task.txt";  //
-//       TaskList tl(&filename[0]);  //
-//       convert string to char[] int flag = cpr.CmdDistributor(tl); if (flag ==
-//       1 || flag == -1) return 0;
-//
-//       while (true) {
-//         cout << "(" << kProgramName << ") ";
-//         if (!cpr.GetCmd()) continue;
-//         if (cpr.CmdDistributor(tl) == -1) return 0;
-//       }
-//     }
-//
-//   } catch (sql::SQLException& e) {
-//     cout << "# ERR: SQLException in " << __FILE__;
-//     cout << "(" << __FUNCTION__ << ") on line  » " << __LINE__ << endl;
-//     cout << "# ERR: " << e.what();
-//     cout << " (MySQL error code: " << e.getErrorCode();
-//     cout << ", SQLState: " << e.getSQLState() << " )" << endl;
-//   }
-//
-//   return 0;
-// }
+void CopyRight() {
+
+}
+
+void Help() {
+  cout << "Help Document:\n";
+  cout << " / /\tIndicates that this option can be omitted\n"
+          " [ ]\tIndicates that this parameter can be omitted\n"
+          " { }\tIndicates that this should be treated as an entity\n"
+          "  / \tIndicates that this is a choice.\n";  
+  cout << "Commands about accounts:\n";
+  cout << "login:\t{login / li} -u USER -p [PASSWORD]\n";
+  cout << "changepassword:\t{changepassword / changepw / cp} -u USER -p "
+          "[PASSWORD]\nTips:\tYou can only enter your new password in the secure way. There's also a confirmation of your new password\n";
+  cout << "createaccount:\t{createaccount / ca} -u USER -p [PASSWORD]\n";
+  cout << "deleteaccount:\t{deleteaccount / da} -u USER -p [PASSWORD]\nTips:\tthis command will also delete your file and you cannot restore it.\n";
+  cout
+      << "Note:\tyou cannot refind your password if you happen to forget it.\n";
+  cout << "Options:\n";
+  cout << "\t\t-u\tindicates USER name\n";
+  cout << "\t\t-p\tindicates PASSWORD\tIf no parameter, you can enter your "
+          "password securely. Recommend not to enter password explicitly in "
+          "command line since it's insecure.\n";
+  cout << "<<Mode 1>>  Complete everything just in Shell Command Line.\n";
+  cout << "Syntax:\t{path/to/executable} [login / li] -u USER -p [PASSWORD] /-c/ [COMMAND]\n";
+  cout
+      << "Options:\t-c\tindicates COMMAND. The COMMAND here can be any "
+         "commands to interact with your tasks which will be described below\n";
+  cout << "<<Mode 2>>  Log in first and input COMMAND to manage your task.\n";
+  cout << "All commands are case insensitive.\n";
+  cout << "Copyright:\tthis help document is written by Zhu Shi Zheng and Zhu "
+          "Zhou Zheng.\n";
+}
