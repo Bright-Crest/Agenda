@@ -15,17 +15,16 @@ using namespace std;
 
 extern mutex mtx;
 
-//bool CmdProcessor::GetArgv(int argc, const char* argv[], int start) {
-//    cmd_.clear();
-//    if (start >= argc) {
-//        return false;
-//    }
-//
-//    for (int i = start; i < argc; i++) {
-//        cmd_.push_back(argv[i]);
-//    }
-//    return true;
-//}
+bool CmdProcessor::GetArgv(int argc, const char* argv[], int start) {
+    cmd_.clear();
+    if (start >= argc) {
+        return false;
+    }
+   for (int i = start; i < argc; i++) {
+      cmd_.push_back(argv[i]);
+    }
+    return true;
+}
 
 bool CmdProcessor::GetCmd() {
     cmd_.clear();
