@@ -686,9 +686,10 @@ bool DeleteTaskOp(TaskList& task_list, list<string> cmd) {
 
   bool flagForErase = (flag1 && flag2 && it1 == it2) ||
                       (!flag1 && id == -1 && flag2) ||
-                      (flag1 && name == "-" && !flag2);  // 指令-n和-i正确
+                      (flag1 && name == "-" && !flag2);  // 指令-n和-i至少有一个,且正确
+  bool flagRight = flagForErase || (!flag1 && !flag2 && id == -1 && name == "-");
 
-  if (flagForErase && flagForAll)  // 删除全部任务
+  if (flagRight && flagForAll)  // 删除全部任务
   {
     task_list.Clear();
     task_list.saveFile();  // 记得将task_list中保存的任务再次保存至文件里
