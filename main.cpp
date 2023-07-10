@@ -41,7 +41,7 @@
 using namespace std;
 namespace fs = std::experimental::filesystem;
 
-mutex mtx;
+//mutex mtx;
 const string kProgramName = "mytask";
 atomic<bool> is_done(false);
 
@@ -179,7 +179,7 @@ int main(int argc, const char* argv[]) {
     while (true) {
       this_thread::sleep_for(chrono::seconds(1));
       if (is_done) break;
-      lock_guard<mutex> lck(mtx);
+      //lock_guard<mutex> lck(mtx);
       task_list.Remind();
     }
 
