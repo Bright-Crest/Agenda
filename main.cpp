@@ -167,6 +167,8 @@ int main(int argc, const char* argv[]) {
 
     int flag = cmd_processor.CmdDistributor(task_list);
     if (flag == 1 || flag == -1) {
+      EncryptFile(de_filename, en_filename, password);
+      remove(de_filename.c_str());
       return 0;
     }
 
