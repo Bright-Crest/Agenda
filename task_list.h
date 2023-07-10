@@ -5,6 +5,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include <mutex>
 using namespace std;
 struct Other {
   std::string name;
@@ -39,6 +40,7 @@ static bool GreaterPriority(pair<int, Other> task1, pair<int, Other> task2) {
 }
 class TaskList {
  public:
+  mutex mtx;
   TaskList(const char* filename);  // including load
   ~TaskList();
   vector<pair<int, Other>>::iterator return_end() { return task_list_.end(); }
@@ -46,7 +48,10 @@ class TaskList {
   int Add(pair<int, Other> task);
   bool Erase(int id);
   bool Erase(string name);
-  void Clear() { task_list_.clear(); }
+  void Clear() {
+    lock_guard<mutex> lck(mtx);
+    task_list_.clear(); 
+  }
   bool FindShow(int id) {
     if (FindTask(id) == task_list_.end()) return false;
     ShowHead();
@@ -76,7 +81,7 @@ class TaskList {
   vector<pair<int, Other>> task_list_;
   const char* file_;
 
-  string m_header;  // 储存表头信息
+  string m_header;  // 鍌ㄥ瓨琛ㄥご淇℃伅
 
   void ShowTask(
       vector<pair<int, Other>>::iterator it) const;  
@@ -84,15 +89,15 @@ class TaskList {
 
   void Show(vector<pair<int, Other>>& vec, int start = 0,
             int end = pow(2, 31) - 1, int priority_range = 7) const;
-  // 私有函数show，展示vec中begin_time介于start与end之间，priority在priority_range内的事件
+  // 绉佹湁鍑芥暟show锛屽睍绀簐ec涓璪egin_time浠嬩簬start涓巈nd涔嬮棿锛宲riority鍦╬riority_range鍐呯殑浜嬩欢
   string get_priority_string(int Priority)
-      const;  // 私有函数，根据priority的代码返回对应的优先级字符串
+      const;  // 绉佹湁鍑芥暟锛屾牴鎹畃riority鐨勪唬鐮佽繑鍥炲搴旂殑浼樺厛绾у瓧绗︿覆
   void Show_with_one_priority(int start, int end, int Priority,
                               vector<pair<int, Other>>& vec)
-      const;  // 私有函数，处理展示一个优先级的事件的要求
+      const;  // 绉佹湁鍑芥暟锛屽鐞嗗睍绀轰竴涓紭鍏堢骇鐨勪簨浠剁殑瑕佹眰
   void Show_with_two_priority(int start, int end, int Priority1, int Priority2,
                               vector<pair<int, Other>>& vec)
-      const;  // 私有函数，处理展示两个优先级的事件的要求
+      const;  // 绉佹湁鍑芥暟锛屽鐞嗗睍绀轰袱涓紭鍏堢骇鐨勪簨浠剁殑瑕佹眰
   void Show_with_all_priority(int start, int end, vector<pair<int, Other>>& vec)
-      const;  // 私有函数，处理展示全部优先级的事件的要求
+      const;  // 绉佹湁鍑芥暟锛屽鐞嗗睍绀哄叏閮ㄤ紭鍏堢骇鐨勪簨浠剁殑瑕佹眰
 };
