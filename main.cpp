@@ -303,8 +303,6 @@ void Help() {
 
   stringstream ss;
 
-  stringstream ss;
-
   ss << "Display help information for commands." << endl
      << "" << endl
      << "<<Mode 1>>" << endl
