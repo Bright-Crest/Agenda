@@ -303,12 +303,12 @@ void Help() {
 
   stringstream ss;
 
+  stringstream ss;
+
   ss << "Display help information for commands." << endl
      << "" << endl
      << "<<Mode 1>>" << endl
-     << "           Write all instructions for an operation of a task on one "
-        "line for the program to "
-     << endl
+     << "           Write all instructions for an operation of a task on one line for the program to " << endl
      << "automatically read and determine" << endl
      << "" << endl
      << "/ /  Indicates that this option can be omitted" << endl
@@ -316,88 +316,122 @@ void Help() {
      << "" << endl
      << "(1)Function and Usage Description of Function <addtask>:" << endl
      << "" << endl
-     << "command format:addtask -n   NAME   -b   BEGIN_TIME   /-p/   "
-        "[PRIORITY]  /-t/  [TYPE]  -r  REMIND_TIME"
-     << endl
+     << "command format:addtask -n   NAME   -b   BEGIN_TIME   /-p/   [PRIORITY]  /-t/  [TYPE]  -r  REMIND_TIME" << endl
      << "" << endl
      << "" << endl
      << "available options:" << endl
      << "                  -n     Name of the new task" << endl
      << "                  -b     begin_time of new task" << endl
-     << "                  /-p/   priority of new task          [PRIORITY]   "
-        "default to 0"
-     << endl
-     << "                  /-t/   type of new task              [TYPE]       "
-        "default to "
-     << endl
+     << "                  /-p/   priority of new task          [PRIORITY]   default to 0" << endl
+     << "                  /-t/   type of new task              [TYPE]       default to " << endl
      << "                  -r     remind_time of new task" << endl
      << "" << endl
      << "Example Usage:" << endl
      << "" << endl
-     << "                   addtask -n	Tom  -b  1990/01/01/10:10:10  -p 2 -t "
-        "sport -r  1995/11/10/10:25:15"
-     << endl
+     << "                   addtask -n	Tom  -b  1990/01/01/10:10:10  -p 2 -t sport -r  1995/11/10/10:25:15" << endl
      << "" << endl
      << "Tips:" << endl
      << "" << endl
-     << "                   1.The time needs to comply with the specifications "
-        "of the time format like xxxx/xx/xx/xx:xx:xx and have practical "
-        "meanings."
-     << endl
+     << "                   1.The time needs to comply with the specifications of the time format like xxxx/xx/xx/xx:xx:xx and have practical meanings." << endl
      << "" << endl
-     << "                   2.User input parameters cannot start with -."
-     << endl
+     << "                   2.User input parameters cannot start with -." << endl
      << "" << endl
      << "" << endl
      << "" << endl
      << "(2)Function and Usage Description of Function <modifytask>:" << endl
      << "" << endl
-     << "command format:modifytask /-N/  NAME  /-I/  ID  /-n/  [NEW_NAME]  "
-        "/-b/   [BEGIN_TIME]  /-p/   [PRIORITY]  /-"
-     << endl
+     << "command format:modifytask /-N/  NAME  /-I/  ID  /-n/  [NEW_NAME]  /-b/   [BEGIN_TIME]  /-p/   [PRIORITY]  /-" << endl
      << "t/   [TYPE]  /-r/  [REMIND_TIME]" << endl
      << "" << endl
      << "available options:" << endl
-     << "                  /-N/     Task name that needs to modify information"
-     << endl
-     << "                  /-I/     Task id that needs to modify information"
-     << endl
-     << "                  /-n/     Name of the new task              "
-        "[NEW_NAME]  default to the name of the task that "
-     << endl
+     << "                  /-N/     Task name that needs to modify information" << endl
+     << "                  /-I/     Task id that needs to modify information" << endl
+     << "                  /-n/     Name of the new task              [NEW_NAME]  default to the name of the task that " << endl
      << "needs to be modified" << endl
-     << "                  /-b/     begin_time of the new task        "
-        "[BEGIN_TIME]    default to the begin_time of the "
-     << endl
+     << "                  /-b/     begin_time of the new task        [BEGIN_TIME]    default to the begin_time of the " << endl
      << "task that needs to be modified" << endl
-     << "                  /-p/     priority of new task              "
-        "[PRIORITY]     default to the priority of the "
-     << endl
+     << "                  /-p/     priority of new task              [PRIORITY]     default to the priority of the " << endl
      << "task that needs to be modified" << endl
-     << "                  /-t/     type of new task                  [TYPE]   "
-        "  default to the type of the task that "
-     << endl
+     << "                  /-t/     type of new task                  [TYPE]     default to the type of the task that " << endl
      << "needs to be modified" << endl
-     << "                  /-r/     remind_time of new task           "
-        "[REMIND_TIME]     default to the remind_time of "
-     << endl
+     << "                  /-r/     remind_time of new task           [REMIND_TIME]     default to the remind_time of " << endl
      << "the task that needs to be modified" << endl
      << "Example Usage:" << endl
      << "" << endl
-     << "                   modifytask -N  Tom  -b  1990/01/01/10:10:10   -t "
-        "sport"
-     << endl
-     << "                   modifytask -N  Tom  -I  123    -r  "
-        "1990/01/01/10:10:10   -p  1"
-     << endl
+     << "                   modifytask -N  Tom  -b  1990/01/01/10:10:10   -t sport" << endl
+     << "                   modifytask -N  Tom  -I  123    -r  1990/01/01/10:10:10   -p  1" << endl
      << "" << endl
      << "Tips:" << endl
      << "" << endl
      << "                  1.-I and - N must have at least one." << endl
-     << "                  2.If no task needs to be modified is found, an "
-        "error will be automatically reported."
-     << endl
+     << "                  2.If no task needs to be modified is found, an error will be automatically reported." << endl
+     << "" << endl
+     << "(3)Function and Usage Description of Function <searchtask>:" << endl
+     << "" << endl
+     << "command format:searchtask /-N/  NAME  /-I/  ID " << endl
+     << "" << endl
+     << "available options:" << endl
+     << "                  /-N/     The name of the task to be searched for" << endl
+     << "                  /-I/     The id of the task to be searched for" << endl
+     << "" << endl
+     << "Example Usage:" << endl
+     << "" << endl
+     << "                  searchtask -N Tom -I 123" << endl
+     << "" << endl
+     << "Tips:" << endl
+     << "" << endl
+     << "                  1.-I and - N must have at least one." << endl
+     << "                  2.If no task needs to be searched is found, an error will be automatically reported." << endl
+     << "" << endl
+     << "" << endl
+     << "(4)Function and Usage Description of Function <showtask>:" << endl
+     << "" << endl
+     << "command format:showtask  /-S/  [START_TIME]  /-E/  [END_TIME]  /-P/  [PRIORITY]  /-T/  [TYPE]  /-a/  /-A/  {i(id),b(begin),p(priority),r(remind)}" << endl
+     << "/-D/  {i(id),b(begin),p(priority),r(remind)}" << endl
+     << "" << endl
+     << "available options:" << endl
+     << "" << endl
+     << "                  /-S/     Filter the start time of the task to be displayed         [START_TIME]    default to  0  " << endl
+     << "                  /-E/     Filter the end time of the task to be displayed           [END_TIME]     default to  pow(2,31)-1" << endl
+     << "                  /-P/     Filter the priority of the task to be displayed           [PRIORITY]     default to 7,show all priority" << endl
+     << "                  /-T/     Filter the type of the task to be displayed               [TYPE]         default  show all type" << endl
+     << "                  /-a/     show all tasks " << endl
+     << "                  /-A/     Filter according to specific requirements and output in ascending order,such as {id,begin,priority,remind}" << endl
+     << "                  /-D/     Filter according to specific requirements and output in descending order,such as {id,begin,priority,remind}" << endl
+     << "Example Usage:" << endl
+     << "" << endl
+     << "                  showtask   -E   1990/01/01/10:10:10  -P   6  -T  study   -A  id " << endl
+     << "" << endl
+     << "Tips:" << endl
+     << "" << endl
+     << "                  1.There can be at most one -A and -D, and if there is one, it must be followed by the parameters." << endl
+     << "                  2.The following parameters can be selected from {i(id),b(begin),p(priority),r(remind)} " << endl
+     << "" << endl
+     << "(5)Function and Usage Description of Function <deletetask>:" << endl
+     << "" << endl
+     << "command format:deltask /-n/  NAME  /-i/  ID  /-a/ " << endl
+     << "" << endl
+     << "available options:" << endl
+     << "                  /-n/     The name of the task to be deleted" << endl
+     << "                  /-i/     The id of the task to be deleted" << endl
+     << "                  /-a/     Delete all the tasks" << endl
+     << "" << endl
+     << "Example Usage:" << endl
+     << "" << endl
+     << "                  deltask -n Tom -i 123" << endl
+     << "" << endl
+     << "Tips:" << endl
+     << "" << endl
+     << "                  1.-I and - N must have at least one." << endl
+     << "                  2.If no task needs to be searched is found, an error will be automatically reported." << endl
+     << "                  3.Using -a will delete all tasks and should be used with caution" << endl
+     << "" << endl
+     << "" << endl
+     << "" << endl
+     << "<<Mode 2>> " << endl
+     << "           Just enter the name of the command that needs to be operated on, and all subsequent operations will be automatically prompted by the program." << endl
+     << "           You only need to make a selection and enter it." << endl
      << "" << endl;
 
-  cout << ss.str();
+     cout << ss.str();
 }
